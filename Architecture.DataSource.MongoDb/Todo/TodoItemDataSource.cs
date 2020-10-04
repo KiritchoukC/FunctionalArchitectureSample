@@ -28,16 +28,6 @@ namespace Architecture.DataSource.MongoDb.Todo
                 .BindT(CacheHelper.Deserialize<IEnumerable<TodoItem>>);
         }
 
-        private Task<Either<TodoFailure, Option<byte[]>>> GetFromCache(CancellationToken token)
-        {
-            return TryAsync(() => _cache.GetAsync(CacheKey, token))
-                .ToEither()
-                .BiMap(
-                    bytes => bytes.IsNull() ? None : Some(bytes),
-                    e => TodoFailures.Cache())
-                .ToEither();
-        }
-
         public async Task<Either<TodoFailure, TodoItem>> Get(Guid id, CancellationToken token)
         {
             throw new NotImplementedException();
