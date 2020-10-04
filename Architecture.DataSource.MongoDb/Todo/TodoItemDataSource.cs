@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Architecture.DataSource.MongoDb.Common.Cache;
 using Architecture.Domain.Todo;
 using LanguageExt;
 using Microsoft.Extensions.Caching.Distributed;
+using static LanguageExt.Prelude;
 
 namespace Architecture.DataSource.MongoDb.Todo
 {
@@ -19,21 +21,21 @@ namespace Architecture.DataSource.MongoDb.Todo
             _cache = cache;
         }
 
-        public async Task<Either<TodoFailure, IEnumerable<TodoItem>>> GetAll(CancellationToken token)
+        public async Task<Either<TodoFailure, Option<IEnumerable<TodoItem>>>> GetAll(CancellationToken token)
         {
-            return Try(async () => await _cache.GetAsync(CacheKey, token))
+            return await CacheHelper.Get(() => _cache.GetAsync(CacheKey, token))
+                .BindT(CacheHelper.Decode)
+                .BindT(CacheHelper.Deserialize<IEnumerable<TodoItem>>);
+        }
+
+        private Task<Either<TodoFailure, Option<byte[]>>> GetFromCache(CancellationToken token)
+        {
+            return TryAsync(() => _cache.GetAsync(CacheKey, token))
                 .ToEither()
-                .Bind(encodedItems => Encoding.UTF8.GetString(encodedItems));
-        }
-
-        private Try<T> Try<T>(Func<T> fun)
-        {
-            return new Try<T>(fun);
-        }
-
-        private async TryAsync<T> Try<T>(Func<Task<T>> fun)
-        {
-            return new TryAsync<T>(fun);
+                .BiMap(
+                    bytes => bytes.IsNull() ? None : Some(bytes),
+                    e => TodoFailures.Cache())
+                .ToEither();
         }
 
         public async Task<Either<TodoFailure, TodoItem>> Get(Guid id, CancellationToken token)
