@@ -18,7 +18,7 @@ namespace Architecture.DataSource.MongoDb.Common.Cache
         /// - None if item does not exist in cache
         /// - Some bytes if item exist in cache
         /// </returns>
-        public static Task<Either<TodoFailure, Option<byte[]>>> Get(Func<Task<byte[]>> cacheGetAsync)
+        public static Task<Either<TodoFailure, Option<byte[]>>> GetBytes(Func<Task<byte[]>> cacheGetAsync)
         {
             return TryAsync(cacheGetAsync)
                 .ToEither()
@@ -37,23 +37,16 @@ namespace Architecture.DataSource.MongoDb.Common.Cache
         /// - None if bytes array is null
         /// - Some string if bytes array is valid
         /// </returns>
-        public static Either<TodoFailure, Option<string>> Decode(Option<byte[]> bytes)
+        public static Either<TodoFailure, Option<string>> DecodeBytesToString(byte[] bytes)
         {
-            static Either<TodoFailure, Option<string>> Decode(byte[] bs)
-            {
-                return
-                    Try(() => Encoding.UTF8.GetString(bs))
-                        .ToEither()
-                        .BiMap(
-                            str => str.IsNull() ? None : Some(str),
-                            e => TodoFailures.CacheDecoding());
-            }
-
-            return bytes.Match(
-                Decode,
-                () => Right(Option<string>.None)
-            );
+            return
+                Try(() => Encoding.UTF8.GetString(bytes))
+                    .ToEither()
+                    .BiMap(
+                        str => str.IsNull() ? None : Some(str),
+                        e => TodoFailures.CacheDecoding());
         }
+
         /// <summary>
         /// Deserialize the json string to type T
         /// </summary>
@@ -64,19 +57,14 @@ namespace Architecture.DataSource.MongoDb.Common.Cache
         /// - None if json string is null
         /// - Some T object if json string is valid
         /// </returns>
-        public static Either<TodoFailure, Option<T>> Deserialize<T>(Option<string> jsonString)
+        public static Either<TodoFailure, Option<T>> DeserializeStringToObject<T>(string jsonString)
         {
-            static Either<TodoFailure, Option<T>> Deserialize(string json) =>
-                Try(() => Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json))
+            return
+                Try(() => Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonString))
                     .ToEither()
                     .BiMap(
                         item => item.IsNull() || item.IsDefault() ? None : Some(item),
                         e => TodoFailures.CacheDeserialization());
-
-            return jsonString.Match(
-                Deserialize,
-                () => Right(Option<T>.None)
-            );
         }
     }
 }
