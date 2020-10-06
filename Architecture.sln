@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Architecture.DataSource.Mon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Architecture.Domain", "Architecture.Domain\Architecture.Domain.csproj", "{88F0C699-378F-458E-B0C9-23230E9DDAE8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Architecture.DataSource.Cache", "Architecture.DataSource.Cache\Architecture.DataSource.Cache.csproj", "{F6711D72-CF62-4378-962A-E5AB818CEB3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{88F0C699-378F-458E-B0C9-23230E9DDAE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88F0C699-378F-458E-B0C9-23230E9DDAE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88F0C699-378F-458E-B0C9-23230E9DDAE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6711D72-CF62-4378-962A-E5AB818CEB3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6711D72-CF62-4378-962A-E5AB818CEB3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6711D72-CF62-4378-962A-E5AB818CEB3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6711D72-CF62-4378-962A-E5AB818CEB3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4347D35F-C336-4885-BE76-41453CB9DEC7} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
@@ -47,5 +53,6 @@ Global
 		{B221F557-7326-428A-BA82-485F5968F904} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
 		{F5AF783C-14B9-4E34-BC05-FDCE2F644D93} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
 		{88F0C699-378F-458E-B0C9-23230E9DDAE8} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
+		{F6711D72-CF62-4378-962A-E5AB818CEB3A} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
 	EndGlobalSection
 EndGlobal

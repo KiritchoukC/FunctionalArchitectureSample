@@ -5,6 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Architecture.DataSource.Cache\Architecture.DataSource.Cache.csproj" />
       <ProjectReference Include="..\Architecture.Domain\Architecture.Domain.csproj" />
     </ItemGroup>
 
@@ -17,6 +18,10 @@
     <ItemGroup>
       <PackageReference Include="LanguageExt.Core" Version="3.4.15" />
       <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common" />
     </ItemGroup>
 
 </Project>

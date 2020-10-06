@@ -4,9 +4,14 @@ namespace Architecture.DataSource.Cache
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddDistributedCache(this IServiceCollection services)
+        public static IServiceCollection AddCache(this IServiceCollection services, string connectionString)
         {
-            services.
+            services.AddStackExchangeRedisCache(opt =>
+            {
+                opt.Configuration = connectionString;
+            });
+
+            return services;
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Architecture.Presentation.Api.Controllers
                 (failure) =>
                     failure.Match(
                         cacheFailure => BadRequest(cacheFailure.Message),
-                        networkFailure => BadRequest(networkFailure.Message)));
+                        networkFailure => BadRequest(TodoFailure.Network.Message)));
         }
     }
 }

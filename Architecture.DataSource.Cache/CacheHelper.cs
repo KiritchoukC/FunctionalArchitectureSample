@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
-using Architecture.Domain.Todo;
+using Architecture.Domain.Common.Cache;
 using LanguageExt;
 using static LanguageExt.Prelude;
+using static Newtonsoft.Json.JsonConvert;
 
-namespace Architecture.DataSource.MongoDb.Common.Cache
+namespace Architecture.DataSource.Cache
 {
     public static class CacheHelper
     {
@@ -18,13 +19,13 @@ namespace Architecture.DataSource.MongoDb.Common.Cache
         /// - None if item does not exist in cache
         /// - Some bytes if item exist in cache
         /// </returns>
-        public static Task<Either<TodoFailure, Option<byte[]>>> GetBytes(Func<Task<byte[]>> cacheGetAsync)
+        public static Task<Either<CacheFailure, Option<byte[]>>> GetBytes(Func<Task<byte[]>> cacheGetAsync)
         {
             return TryAsync(cacheGetAsync)
                 .ToEither()
                 .BiMap(
                     bytes => bytes.IsNull() ? None : Some(bytes),
-                    e => TodoFailures.Cache())
+                    e => CacheFailures.Retrieve())
                 .ToEither();
         }
 
@@ -37,14 +38,14 @@ namespace Architecture.DataSource.MongoDb.Common.Cache
         /// - None if bytes array is null
         /// - Some string if bytes array is valid
         /// </returns>
-        public static Either<TodoFailure, Option<string>> DecodeBytesToString(byte[] bytes)
+        public static Either<CacheFailure, Option<string>> DecodeBytesToString(byte[] bytes)
         {
             return
                 Try(() => Encoding.UTF8.GetString(bytes))
                     .ToEither()
                     .BiMap(
                         str => str.IsNull() ? None : Some(str),
-                        e => TodoFailures.CacheDecoding());
+                        e => CacheFailures.Decoding());
         }
 
         /// <summary>
@@ -57,14 +58,14 @@ namespace Architecture.DataSource.MongoDb.Common.Cache
         /// - None if json string is null
         /// - Some T object if json string is valid
         /// </returns>
-        public static Either<TodoFailure, Option<T>> DeserializeStringToObject<T>(string jsonString)
+        public static Either<CacheFailure, Option<T>> DeserializeStringToObject<T>(string jsonString)
         {
             return
-                Try(() => Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonString))
+                Try(() => DeserializeObject<T>(jsonString))
                     .ToEither()
                     .BiMap(
                         item => item.IsNull() || item.IsDefault() ? None : Some(item),
-                        e => TodoFailures.CacheDeserialization());
+                        e => CacheFailures.Deserialization());
         }
     }
 }
