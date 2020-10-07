@@ -24,8 +24,30 @@ namespace Architecture.DataSource.Cache
             return TryAsync(cacheGetAsync)
                 .ToEither()
                 .BiMap(
-                    bytes => bytes.IsNull() ? None : Some(bytes),
+                    Optional,
                     e => CacheFailures.Retrieve())
+                .ToEither();
+        }
+
+        /// <summary>
+        /// Set item to cache as bytes asynchronously
+        /// </summary>
+        /// <param name="cacheSetAsync">The asynchronous function setting the bytes to cache</param>
+        /// <returns>
+        /// - A cache insert failure
+        /// - None
+        /// - Some bytes if item exist in cache
+        /// </returns>
+        public static Task<Either<CacheFailure, Unit>> SetBytes(Func<Task> cacheSetAsync)
+        {
+            return TryAsync(async () =>
+                {
+                    await cacheSetAsync();
+                    return unit;
+                })
+                .ToEither()
+                .MapLeft(
+                    e => CacheFailures.Insert())
                 .ToEither();
         }
 
@@ -44,7 +66,7 @@ namespace Architecture.DataSource.Cache
                 Try(() => Encoding.UTF8.GetString(bytes))
                     .ToEither()
                     .BiMap(
-                        str => str.IsNull() ? None : Some(str),
+                        Optional,
                         e => CacheFailures.Decoding());
         }
 
@@ -64,8 +86,45 @@ namespace Architecture.DataSource.Cache
                 Try(() => DeserializeObject<T>(jsonString))
                     .ToEither()
                     .BiMap(
-                        item => item.IsNull() || item.IsDefault() ? None : Some(item),
-                        e => CacheFailures.Deserialization());
+                        Optional,
+                        _ => CacheFailures.Deserialization());
+        }
+
+        /// <summary>
+        /// Serialize an object to a json string
+        /// </summary>
+        /// <param name="item">The item serialize</param>
+        /// <typeparam name="T">The item's type</typeparam>
+        /// <returns>
+        /// - A serialization failure
+        /// - None if item is null
+        /// - Some json string
+        /// </returns>
+        public static Either<CacheFailure, string> SerializeObjectToString<T>(T item)
+        {
+            return
+                Try(() => SerializeObject(item))
+                    .ToEither()
+                    .MapLeft(
+                        _ => CacheFailures.Serialization());
+        }
+
+        /// <summary>
+        /// Encode the string to a bytes array
+        /// </summary>
+        /// <param name="jsonStr">The json string to encode</param>
+        /// <returns>
+        /// - A encoding failure
+        /// - None
+        /// - Some bytes array
+        /// </returns>
+        public static Either<CacheFailure, byte[]> EncodeStringToBytes(string jsonStr)
+        {
+            return
+                Try(() => Encoding.UTF8.GetBytes(jsonStr))
+                    .ToEither()
+                    .MapLeft(
+                        e => CacheFailures.Encoding());
         }
     }
 }
