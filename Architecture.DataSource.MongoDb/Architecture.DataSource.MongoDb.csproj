@@ -5,7 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Architecture.DataSource.Cache\Architecture.DataSource.Cache.csproj" />
       <ProjectReference Include="..\Architecture.Domain\Architecture.Domain.csproj" />
     </ItemGroup>
 

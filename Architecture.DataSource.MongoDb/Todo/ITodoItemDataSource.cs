@@ -11,7 +11,7 @@ namespace Architecture.DataSource.MongoDb.Todo
 
     public interface ITodoItemDataSource
     {
-        Task<Either<TodoFailure, Option<IEnumerable<TodoItem>>>> GetAll(CancellationToken token);
+        Task<Either<TodoFailure, IEnumerable<TodoItem>>> GetAll(CancellationToken token);
         Task<Either<TodoFailure, Option<TodoItem>>> GetById(Guid id, CancellationToken token);
         Task<Either<TodoFailure, Guid>> Add(TodoItem todoItem, CancellationToken token);
         Task<Either<TodoFailure, Unit>> Update(TodoItem todoItem, CancellationToken token);

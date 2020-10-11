@@ -4,4 +4,19 @@
         <TargetFramework>netstandard2.1</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="LanguageExt.Core" Version="3.4.15" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Architecture.DataSource.Cache\Architecture.DataSource.Cache.csproj" />
+      <ProjectReference Include="..\Architecture.Domain\Architecture.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.Caching.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
+        <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\5.0.0-preview.6.20312.15\ref\net5.0\Microsoft.Extensions.Caching.Abstractions.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>
