@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
-using System.Threading.Tasks;
 using Architecture.Domain.Common.Cache;
 using LanguageExt;
 using static LanguageExt.Prelude;
 using static Newtonsoft.Json.JsonConvert;
+using Encoding = System.Text.Encoding;
 
 namespace Architecture.DataSource.Cache
 {
@@ -13,42 +13,40 @@ namespace Architecture.DataSource.Cache
         /// <summary>
         /// Get item from cache as bytes asynchronously
         /// </summary>
-        /// <param name="cacheGetAsync">The asynchronous function getting the bytes from cache</param>
+        /// <param name="cacheGet">The asynchronous function getting the bytes from cache</param>
         /// <returns>
         /// - A cache failure
         /// - None if item does not exist in cache
         /// - Some bytes if item exist in cache
         /// </returns>
-        public static Task<Either<CacheFailure, Option<byte[]>>> GetBytes(Func<Task<byte[]>> cacheGetAsync)
+        public static Either<CacheFailure, Option<byte[]>> GetBytes(Func<byte[]> cacheGet)
         {
-            return TryAsync(cacheGetAsync)
+            return Try(cacheGet)
                 .ToEither()
                 .BiMap(
                     Optional,
-                    e => CacheFailures.Retrieve())
-                .ToEither();
+                    e => CacheFailureCon.Retrieve());
         }
 
         /// <summary>
         /// Set item to cache as bytes asynchronously
         /// </summary>
-        /// <param name="cacheSetAsync">The asynchronous function setting the bytes to cache</param>
+        /// <param name="cacheSet">The asynchronous function setting the bytes to cache</param>
         /// <returns>
         /// - A cache insert failure
         /// - None
         /// - Some bytes if item exist in cache
         /// </returns>
-        public static Task<Either<CacheFailure, Unit>> SetBytes(Func<Task> cacheSetAsync)
+        public static Either<CacheFailure, Unit> SetBytes(Action cacheSet)
         {
-            return TryAsync(async () =>
+            return Try(() =>
                 {
-                    await cacheSetAsync();
+                    cacheSet();
                     return unit;
                 })
                 .ToEither()
                 .MapLeft(
-                    e => CacheFailures.Insert())
-                .ToEither();
+                    e => CacheFailureCon.Insert());
         }
 
         /// <summary>
@@ -67,7 +65,7 @@ namespace Architecture.DataSource.Cache
                     .ToEither()
                     .BiMap(
                         Optional,
-                        e => CacheFailures.Decoding());
+                        e => CacheFailureCon.Decoding());
         }
 
         /// <summary>
@@ -87,7 +85,7 @@ namespace Architecture.DataSource.Cache
                     .ToEither()
                     .BiMap(
                         Optional,
-                        _ => CacheFailures.Deserialization());
+                        _ => CacheFailureCon.Deserialization());
         }
 
         /// <summary>
@@ -106,7 +104,7 @@ namespace Architecture.DataSource.Cache
                 Try(() => SerializeObject(item))
                     .ToEither()
                     .MapLeft(
-                        _ => CacheFailures.Serialization());
+                        _ => CacheFailureCon.Serialization());
         }
 
         /// <summary>
@@ -124,7 +122,7 @@ namespace Architecture.DataSource.Cache
                 Try(() => Encoding.UTF8.GetBytes(jsonStr))
                     .ToEither()
                     .MapLeft(
-                        e => CacheFailures.Encoding());
+                        e => CacheFailureCon.Encoding());
         }
     }
 }

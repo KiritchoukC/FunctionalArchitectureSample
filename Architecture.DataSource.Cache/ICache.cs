@@ -8,7 +8,7 @@ namespace Architecture.DataSource.Cache
 {
     public interface ICache
     {
-        Task<Either<CacheFailure, Option<T>>> GetAsync<T>(CancellationToken token);
-        Task<Either<CacheFailure, Unit>> SetAsync<T>(T item, CancellationToken token);
+        Either<CacheFailure, Option<T>> Get<T>();
+        Either<CacheFailure, Unit> Set<T>(T item);
     }
 }

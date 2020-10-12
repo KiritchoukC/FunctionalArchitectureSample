@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using LanguageExt;
+using LanguageExt.Common;
 
 namespace Architecture.DataSource.MongoDb.Todo
 {
@@ -11,9 +12,9 @@ namespace Architecture.DataSource.MongoDb.Todo
 
     public interface ITodoItemDataSource
     {
-        Task<Either<TodoFailure, IEnumerable<TodoItem>>> GetAll(CancellationToken token);
-        Task<Either<TodoFailure, Option<TodoItem>>> GetById(Guid id, CancellationToken token);
-        Task<Either<TodoFailure, Guid>> Add(TodoItem todoItem, CancellationToken token);
-        Task<Either<TodoFailure, Unit>> Update(TodoItem todoItem, CancellationToken token);
+        Either<Exception, IEnumerable<TodoItemDto>> GetAll();
+        Either<TodoFailure, Option<TodoItem>> GetById(Guid id);
+        Either<TodoFailure, Guid> Add(TodoItem todoItem);
+        Either<TodoFailure, Unit> Update(TodoItem todoItem);
     }
 }

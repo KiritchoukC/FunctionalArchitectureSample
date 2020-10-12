@@ -22,12 +22,14 @@ namespace Architecture.Presentation.Api.Controllers
         {
             var result = await _mediator.Send(new GetAllTodosQuery());
 
-            return result.Match<IActionResult>(
-                Ok,
-                (failure) =>
-                    failure.Match(
-                        cacheFailure => BadRequest(cacheFailure.Message),
-                        networkFailure => BadRequest(TodoFailure.Network.Message)));
+            return null;
+
+            // return result.Match<IActionResult>(
+            //     Ok,
+            //     (failure) =>
+            //         failure.Match(
+            //             cacheFailure => BadRequest(cacheFailure.Message),
+            //             networkFailure => BadRequest(TodoFailure.Network.Message)));
         }
     }
 }

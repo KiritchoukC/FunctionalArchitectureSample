@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Architecture.Domain.Common.Cache;
 using LanguageExt;
 using Microsoft.Extensions.Caching.Distributed;
@@ -21,18 +19,18 @@ namespace Architecture.DataSource.Cache
             _cache = cache;
         }
 
-        public async Task<Either<CacheFailure, Option<T>>> GetAsync<T>(CancellationToken token)
+        public Either<CacheFailure, Option<T>> Get<T>()
         {
-            return (await CacheHelper.GetBytes(() => _cache.GetAsync(_cacheKey, token)))
+            return CacheHelper.GetBytes(() => _cache.Get(_cacheKey))
                 .BindT(CacheHelper.DecodeBytesToString)
                 .BindT(CacheHelper.DeserializeStringToObject<T>);
         }
 
-        public async Task<Either<CacheFailure, Unit>> SetAsync<T>(T item, CancellationToken token)
+        public Either<CacheFailure, Unit> Set<T>(T item)
         {
-            return await CacheHelper.SerializeObjectToString<T>(item)
+            return CacheHelper.SerializeObjectToString<T>(item)
                 .Bind(CacheHelper.EncodeStringToBytes)
-                .BindAsync(bytes => CacheHelper.SetBytes(() => _cache.SetAsync(_cacheKey, bytes, token)));
+                .Bind(bytes => CacheHelper.SetBytes(() => _cache.Set(_cacheKey, bytes)));
         }
     }
 }

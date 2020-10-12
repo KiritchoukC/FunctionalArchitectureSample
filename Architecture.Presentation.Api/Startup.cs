@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Architecture.Application;
 using Architecture.DataSource.Cache;
+using Architecture.DataSource.MongoDb;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,6 +34,9 @@ namespace Architecture.Presentation.Api
             services.AddApplication();
             services.AddControllers();
             services.AddCache(Configuration.GetConnectionString("Cache.Redis"));
+            services.AddDatabase(
+                Configuration.GetConnectionString("MongoDb:Connection"), 
+                Configuration.GetConnectionString("MongoDb:Database"));
             services.AddOpenApiDocument();
         }
 
