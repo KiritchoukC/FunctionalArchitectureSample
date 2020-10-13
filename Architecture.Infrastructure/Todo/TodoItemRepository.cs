@@ -34,7 +34,7 @@ namespace Architecture.Infrastructure.Todo
                 fun(
                     () =>
                         _todoItemDataSource.GetAll()
-                            .MapLeft(ex => TodoFailureCon.Database(DatabaseFailureCon.Retrieve(ex)))
+                            .MapLeft(TodoFailureCon.Database)
                             .MapT(TodoItemTranslator.FromDto)
                 );
 
@@ -71,7 +71,7 @@ namespace Architecture.Infrastructure.Todo
                 fun(
                     () =>
                         _todoItemDataSource.GetAll()
-                            .MapLeft(ex => TodoFailureCon.Database(DatabaseFailureCon.Retrieve(ex)))
+                            .MapLeft(TodoFailureCon.Database)
                             .MapT(TodoItemTranslator.FromDto)
                 );
 
@@ -123,6 +123,7 @@ namespace Architecture.Infrastructure.Todo
                 );
 
             return _todoItemDataSource.Add(item)
+                .MapLeft(TodoFailureCon.Database)
                 .Bind(_ => addToCache(item));
         }
     }

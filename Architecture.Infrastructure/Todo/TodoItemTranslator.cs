@@ -5,9 +5,7 @@ namespace Architecture.Infrastructure.Todo
 {
     public static class TodoItemTranslator
     {
-        public static TodoItem FromDto(TodoItemDto dto)
-        {
-            return TodoItem.New(dto.Id, dto.IsDone, TodoContent.New(dto.Content));
-        }
+        public static TodoItem FromDto(TodoItemDto dto) 
+            => TodoItem.New(dto.Id, dto.IsDone, TodoContent.New(dto.Content));
     }
 }

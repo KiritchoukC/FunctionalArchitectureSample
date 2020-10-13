@@ -1,6 +1,7 @@
 ﻿
 using System.Threading;
 using System.Threading.Tasks;
+using Architecture.Domain.Common.Database;
 using LanguageExt;
 using LanguageExt.Common;
 
@@ -12,9 +13,9 @@ namespace Architecture.DataSource.MongoDb.Todo
 
     public interface ITodoItemDataSource
     {
-        Either<Exception, IEnumerable<TodoItemDto>> GetAll();
-        Either<TodoFailure, Option<TodoItem>> GetById(Guid id);
-        Either<TodoFailure, Unit> Add(TodoItem todoItem);
-        Either<TodoFailure, Unit> Update(TodoItem todoItem);
+        Either<DatabaseFailure, IEnumerable<TodoItemDto>> GetAll();
+        Either<DatabaseFailure, Option<TodoItem>> GetById(Guid id);
+        Either<DatabaseFailure, Unit> Add(TodoItem todoItem);
+        Either<DatabaseFailure, Unit> Update(TodoItem todoItem);
     }
 }

@@ -25,25 +25,26 @@ namespace Architecture.DataSource.MongoDb.Todo
                 .GetCollection<TodoItemDto>("items");
         }
 
-        public Either<Exception, IEnumerable<TodoItemDto>> GetAll()
+        public Either<DatabaseFailure, IEnumerable<TodoItemDto>> GetAll()
         {
             return Try(() => _todoCollection.Find(x => true).ToList())
                 .ToEither()
+                .MapLeft(DatabaseFailureCon.Retrieve)
                 .Map(items => items.AsEnumerable())
                 .Map(items => items ?? Enumerable.Empty<TodoItemDto>());
         }
 
-        public Either<TodoFailure, Option<TodoItem>> GetById(Guid id)
+        public Either<DatabaseFailure, Option<TodoItem>> GetById(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Either<TodoFailure, Guid> Add(TodoItem todoItem)
+        public Either<DatabaseFailure, Unit> Add(TodoItem todoItem)
         {
             throw new NotImplementedException();
         }
 
-        public Either<TodoFailure, Unit> Update(TodoItem todoItem)
+        public Either<DatabaseFailure, Unit> Update(TodoItem todoItem)
         {
             throw new NotImplementedException();
         }
