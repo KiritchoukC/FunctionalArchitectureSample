@@ -1,14 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Architecture.Domain.Common.Cache;
+﻿using Architecture.Domain.Common.Cache;
 using LanguageExt;
 
 namespace Architecture.DataSource.Cache
 {
-    public interface ICache
+    public interface ICache<T>
     {
-        Either<CacheFailure, Option<T>> Get<T>();
-        Either<CacheFailure, Unit> Set<T>(T item);
+        Either<CacheFailure, Option<T>> Get();
+        Either<CacheFailure, Unit> Set(T item);
     }
 }

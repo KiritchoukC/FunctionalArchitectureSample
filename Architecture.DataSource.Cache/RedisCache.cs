@@ -8,7 +8,7 @@ using static LanguageExt.Prelude;
 
 namespace Architecture.DataSource.Cache
 {
-    public class RedisCache : ICache
+    public class RedisCache<T> : ICache<T>
     {
         private readonly string _cacheKey;
         private readonly IDistributedCache _cache;
@@ -19,14 +19,14 @@ namespace Architecture.DataSource.Cache
             _cache = cache;
         }
 
-        public Either<CacheFailure, Option<T>> Get<T>()
+        public Either<CacheFailure, Option<T>> Get()
         {
             return CacheHelper.GetBytes(() => _cache.Get(_cacheKey))
                 .BindT(CacheHelper.DecodeBytesToString)
                 .BindT(CacheHelper.DeserializeStringToObject<T>);
         }
 
-        public Either<CacheFailure, Unit> Set<T>(T item)
+        public Either<CacheFailure, Unit> Set(T item)
         {
             return CacheHelper.SerializeObjectToString<T>(item)
                 .Bind(CacheHelper.EncodeStringToBytes)
