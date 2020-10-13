@@ -107,7 +107,23 @@ namespace Architecture.Infrastructure.Todo
 
         public Either<TodoFailure, Unit> Add(TodoItem item)
         {
-            throw new NotImplementedException();
+            var addItemToListIfSome = fun(
+                (Option<IEnumerable<TodoItem>> items, TodoItem i) =>
+                    items.Match(
+                        xs => xs.Prepend(i),
+                        () => (new []{i}).AsEnumerable())
+                );
+            
+            var addToCache = fun(
+                (TodoItem i) => _cache.Get()
+                    .Bind<IEnumerable<TodoItem>>(x => Right(addItemToListIfSome(x, item)))
+                    .Map(items => _cache.Set(items))
+                    .Flatten()
+                    .MapLeft(TodoFailureCon.Cache)
+                );
+
+            return _todoItemDataSource.Add(item)
+                .Bind(_ => addToCache(item));
         }
     }
 }
