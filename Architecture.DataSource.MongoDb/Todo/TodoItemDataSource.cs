@@ -39,12 +39,12 @@ namespace Architecture.DataSource.MongoDb.Todo
             throw new NotImplementedException();
         }
 
-        public Either<DatabaseFailure, Unit> Add(TodoItem todoItem)
+        public Either<DatabaseFailure, Unit> Add(TodoItemDto todoItem)
         {
             throw new NotImplementedException();
         }
 
-        public Either<DatabaseFailure, Unit> Update(TodoItem todoItem)
+        public Either<DatabaseFailure, Unit> Update(TodoItemDto todoItem)
         {
             throw new NotImplementedException();
         }

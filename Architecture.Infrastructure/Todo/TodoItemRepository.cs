@@ -30,78 +30,32 @@ namespace Architecture.Infrastructure.Todo
 
         public Either<TodoFailure, IEnumerable<TodoItem>> GetAll()
         {
-            var getFromDatabase =
-                fun(
-                    () =>
-                        _todoItemDataSource.GetAll()
-                            .MapLeft(TodoFailureCon.Database)
-                            .MapT(TodoItemTranslator.FromDto)
-                );
-
-            var updateCache =
-                fun(
-                    (List<TodoItem> items) =>
-                        _cache.Set(items)
-                            .Map(x=> items.AsEnumerable())
-                            .MapLeft(TodoFailureCon.Cache)
-                );
-
             var getFromDatabaseIfCacheIsNone =
                 fun(
                     (Option<IEnumerable<TodoItem>> cacheItems) =>
                         cacheItems.Match(
                             items => Right(items),
-                            () => getFromDatabase()
-                                .Map(Enumerable.ToList)
-                                .Bind(updateCache))
+                            RetrieveFromDatabaseAndFillCache)
                 );
 
-            var getFromCache =
-                fun(
-                    () => _cache.Get().MapLeft(TodoFailureCon.Cache)
-                );
-
-            return getFromCache()
+            return GetFromCache()
                 .Bind(getFromDatabaseIfCacheIsNone);
         }
 
-        public Either<TodoFailure, Option<TodoItem>> GetById(Guid id)
+        public Either<TodoFailure, Option<TodoItem>> GetById(TodoId id)
         {
-            var getFromDatabase =
-                fun(
-                    () =>
-                        _todoItemDataSource.GetAll()
-                            .MapLeft(TodoFailureCon.Database)
-                            .MapT(TodoItemTranslator.FromDto)
-                );
-
-            var updateCache =
-                fun(
-                    (List<TodoItem> items) =>
-                        _cache.Set(items)
-                            .Map(x=> items.AsEnumerable())
-                            .MapLeft(TodoFailureCon.Cache)
-                );
-
             var getFromDatabaseIfCacheIsNone =
                 fun(
                     (Option<IEnumerable<TodoItem>> cacheItems) =>
-                        cacheItems.Map(items => items.Find(x => x.Id.Value == id))
+                        cacheItems.Map(items => items.Find(x => x.Id == id))
                             .Flatten()
                             .Match(
                                 item => Right(Optional(item)),
-                                () => getFromDatabase()
-                                    .Map(Enumerable.ToList)
-                                    .Bind(updateCache)
-                                    .Map(items => items.Find(x=> x.Id.Value == id)))
+                                () => RetrieveFromDatabaseAndFillCache()
+                                    .Map(items => items.Find(x => x.Id == id)))
                 );
 
-            var getFromCache =
-                fun(
-                    () => _cache.Get().MapLeft(TodoFailureCon.Cache)
-                );
-
-            return getFromCache()
+            return GetFromCache()
                 .Bind(getFromDatabaseIfCacheIsNone);
         }
 
@@ -111,20 +65,43 @@ namespace Architecture.Infrastructure.Todo
                 (Option<IEnumerable<TodoItem>> items, TodoItem i) =>
                     items.Match(
                         xs => xs.Prepend(i),
-                        () => (new []{i}).AsEnumerable())
-                );
-            
+                        () => (new[] {i}).AsEnumerable())
+            );
+
             var addToCache = fun(
                 (TodoItem i) => _cache.Get()
                     .Bind<IEnumerable<TodoItem>>(x => Right(addItemToListIfSome(x, item)))
                     .Map(items => _cache.Set(items))
                     .Flatten()
                     .MapLeft(TodoFailureCon.Cache)
-                );
+            );
 
-            return _todoItemDataSource.Add(item)
+            return TodoItemTranslator.ToDto(item)
+                .Apply(_todoItemDataSource.Add)
                 .MapLeft(TodoFailureCon.Database)
                 .Bind(_ => addToCache(item));
         }
+
+        private Either<TodoFailure, IEnumerable<TodoItem>> RetrieveFromDatabaseAndFillCache()
+        {
+            return GetFromDatabase()
+                .Bind(UpdateCache);
+        }
+
+        private Either<TodoFailure, IEnumerable<TodoItem>> UpdateCache(IEnumerable<TodoItem> items)
+        {
+            var lst = items.ToList();
+            return _cache.Set(lst)
+                .Map(_ => lst.AsEnumerable())
+                .MapLeft(TodoFailureCon.Cache);
+        }
+
+        private Either<TodoFailure, IEnumerable<TodoItem>> GetFromDatabase()
+            => _todoItemDataSource.GetAll()
+                .MapLeft(TodoFailureCon.Database)
+                .MapT(TodoItemTranslator.FromDto);
+
+        private Either<TodoFailure, Option<IEnumerable<TodoItem>>> GetFromCache()
+            => _cache.Get().MapLeft(TodoFailureCon.Cache);
     }
 }

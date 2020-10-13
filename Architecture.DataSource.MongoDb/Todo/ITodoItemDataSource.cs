@@ -15,7 +15,7 @@ namespace Architecture.DataSource.MongoDb.Todo
     {
         Either<DatabaseFailure, IEnumerable<TodoItemDto>> GetAll();
         Either<DatabaseFailure, Option<TodoItem>> GetById(Guid id);
-        Either<DatabaseFailure, Unit> Add(TodoItem todoItem);
-        Either<DatabaseFailure, Unit> Update(TodoItem todoItem);
+        Either<DatabaseFailure, Unit> Add(TodoItemDto todoItem);
+        Either<DatabaseFailure, Unit> Update(TodoItemDto todoItem);
     }
 }
