@@ -86,14 +86,14 @@ namespace Architecture.Infrastructure.Todo
             var getFromDatabaseIfCacheIsNone =
                 fun(
                     (Option<IEnumerable<TodoItem>> cacheItems) =>
-                        cacheItems.Map(items => items.Find(x => x.Id == id))
+                        cacheItems.Map(items => items.Find(x => x.Id.Value == id))
                             .Flatten()
                             .Match(
                                 item => Right(Optional(item)),
                                 () => getFromDatabase()
                                     .Map(Enumerable.ToList)
                                     .Bind(updateCache)
-                                    .Map(items => items.Find(x=> x.Id == id)))
+                                    .Map(items => items.Find(x=> x.Id.Value == id)))
                 );
 
             var getFromCache =
