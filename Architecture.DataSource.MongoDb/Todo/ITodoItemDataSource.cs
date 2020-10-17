@@ -13,7 +13,7 @@ namespace Architecture.DataSource.MongoDb.Todo
 
     public interface ITodoItemDataSource
     {
-        Either<DatabaseFailure, IEnumerable<TodoItemDto>> GetAll();
+        Either<DatabaseFailure, Seq<TodoItemDto>> GetAll();
         Either<DatabaseFailure, Option<TodoItem>> GetById(Guid id);
         Either<DatabaseFailure, Unit> Add(TodoItemDto todoItem);
         Either<DatabaseFailure, Unit> Update(TodoItemDto todoItem);

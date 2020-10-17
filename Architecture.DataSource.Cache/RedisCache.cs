@@ -28,7 +28,7 @@ namespace Architecture.DataSource.Cache
 
         public Either<CacheFailure, Unit> Set(T item)
         {
-            return CacheHelper.SerializeObjectToString<T>(item)
+            return CacheHelper.SerializeObjectToString(item)
                 .Bind(CacheHelper.EncodeStringToBytes)
                 .Bind(bytes => CacheHelper.SetBytes(() => _cache.Set(_cacheKey, bytes)));
         }
