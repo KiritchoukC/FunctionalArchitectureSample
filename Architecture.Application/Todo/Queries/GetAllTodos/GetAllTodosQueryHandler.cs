@@ -2,18 +2,26 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Architecture.Domain.Todo;
+using Architecture.Infrastructure.Todo;
 using LanguageExt;
 using MediatR;
 
 namespace Architecture.Application.Todo.Queries.GetAllTodos
 {
-    public class GetAllTodosQuery : IRequest<Either<TodoFailure, ImmutableList<TodoItem>>> { }
+    public class GetAllTodosQuery : IRequest<Either<TodoFailure, Seq<TodoItem>>> { }
     
-    public class GetAllTodosQueryHandler : IRequestHandler<GetAllTodosQuery, Either<TodoFailure, ImmutableList<TodoItem>>>
+    public class GetAllTodosQueryHandler : IRequestHandler<GetAllTodosQuery, Either<TodoFailure, Seq<TodoItem>>>
     {
-        public Task<Either<TodoFailure, ImmutableList<TodoItem>>> Handle(GetAllTodosQuery request, CancellationToken cancellationToken)
+        private readonly ITodoItemRepository _todoItemRepository;
+
+        public GetAllTodosQueryHandler(ITodoItemRepository todoItemRepository)
         {
-            throw new System.NotImplementedException();
+            _todoItemRepository = todoItemRepository;
+        }
+
+        public Task<Either<TodoFailure, Seq<TodoItem>>> Handle(GetAllTodosQuery request, CancellationToken token)
+        {
+            return _todoItemRepository.GetAll().AsTask();
         }
     }
 }

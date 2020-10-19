@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Architecture.DataSource.MongoDb.Todo;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 
 namespace Architecture.DataSource.MongoDb
@@ -8,6 +9,8 @@ namespace Architecture.DataSource.MongoDb
         public static IServiceCollection AddDatabase(this IServiceCollection services, string connectionString, string database)
         {
             services.AddSingleton<IMongoClient, MongoClient>(_ => new MongoClient(connectionString));
+
+            services.AddTransient<ITodoItemDataSource, TodoItemDataSource>();
             
             return services;
         }

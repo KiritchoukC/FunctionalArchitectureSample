@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Architecture.Application.Todo.Queries.GetAllTodos;
-using Architecture.Domain.Common.Cache;
 using Architecture.Domain.Todo;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-using static Architecture.Presentation.Api.Common.FailuresHandlers;
+using static Architecture.Presentation.Common.FailuresHandlers;
 
-namespace Architecture.Presentation.Api.Controllers
+namespace Architecture.Presentation.Controllers
 {
     [ApiController]
     [Route("api/todo")]
-    public class TodoItemController : ControllerBase
+    public class TodoController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public TodoItemController(IMediator mediator)
+        public TodoController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -26,11 +25,10 @@ namespace Architecture.Presentation.Api.Controllers
         {
             var result = await _mediator.Send(new GetAllTodosQuery());
 
-            
-            
             return result.Match(
                 items => Ok(items),
-                HandleFailure);
+                HandleFailure,
+                NotFound);
         }
 
         private IActionResult HandleFailure(TodoFailure failure)

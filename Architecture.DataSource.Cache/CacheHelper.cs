@@ -19,13 +19,11 @@ namespace Architecture.DataSource.Cache
         /// - None if item does not exist in cache
         /// - Some bytes if item exist in cache
         /// </returns>
-        public static Either<CacheFailure, Option<byte[]>> GetBytes(Func<byte[]> cacheGet)
+        public static Either<CacheFailure, Option<byte[]>> GetBytes(Func<Option<byte[]>> cacheGet)
         {
             return Try(cacheGet)
                 .ToEither()
-                .BiMap(
-                    Optional,
-                    e => CacheFailureCon.Retrieve());
+                .MapLeft(e => CacheFailureCon.Fetch());
         }
 
         /// <summary>
@@ -61,11 +59,9 @@ namespace Architecture.DataSource.Cache
         public static Either<CacheFailure, Option<string>> DecodeBytesToString(byte[] bytes)
         {
             return
-                Try(() => Encoding.UTF8.GetString(bytes))
+                TryOption(() => Encoding.UTF8.GetString(bytes))
                     .ToEither()
-                    .BiMap(
-                        Optional,
-                        e => CacheFailureCon.Decoding());
+                    .MapLeft(_ => CacheFailureCon.Decoding());
         }
 
         /// <summary>
@@ -81,11 +77,9 @@ namespace Architecture.DataSource.Cache
         public static Either<CacheFailure, Option<T>> DeserializeStringToObject<T>(string jsonString)
         {
             return
-                Try(() => DeserializeObject<T>(jsonString))
+                TryOption(() => DeserializeObject<T>(jsonString))
                     .ToEither()
-                    .BiMap(
-                        Optional,
-                        _ => CacheFailureCon.Deserialization());
+                    .MapLeft(_ => CacheFailureCon.Deserialization());
         }
 
         /// <summary>

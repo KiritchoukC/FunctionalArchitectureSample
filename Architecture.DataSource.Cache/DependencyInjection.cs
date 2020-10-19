@@ -9,6 +9,7 @@ namespace Architecture.DataSource.Cache
             services.AddStackExchangeRedisCache(opt =>
             {
                 opt.Configuration = connectionString;
+                opt.InstanceName = "master";
             });
 
             return services;

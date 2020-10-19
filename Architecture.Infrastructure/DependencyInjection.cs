@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Architecture.Infrastructure.Todo;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Architecture.Infrastructure
 {
@@ -6,6 +7,8 @@ namespace Architecture.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
+            services.AddTransient<ITodoItemRepository, TodoItemRepository>();
+            
             return services;
         }
     }

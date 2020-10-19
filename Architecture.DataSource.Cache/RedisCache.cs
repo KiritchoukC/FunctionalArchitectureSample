@@ -21,7 +21,7 @@ namespace Architecture.DataSource.Cache
 
         public Either<CacheFailure, Option<T>> Get()
         {
-            return CacheHelper.GetBytes(() => _cache.Get(_cacheKey))
+            return CacheHelper.GetBytes(() => _cache.Get(_cacheKey).Apply(Optional))
                 .BindT(CacheHelper.DecodeBytesToString)
                 .BindT(CacheHelper.DeserializeStringToObject<T>);
         }
