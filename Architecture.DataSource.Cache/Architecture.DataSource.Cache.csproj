@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Architecture.Domain\Architecture.Domain.csproj" />
+      <ProjectReference Include="..\Architecture.Utils\Architecture.Utils.csproj" />
     </ItemGroup>
 
 </Project>

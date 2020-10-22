@@ -56,12 +56,14 @@ namespace Architecture.DataSource.Cache
         /// - None if bytes array is null
         /// - Some string if bytes array is valid
         /// </returns>
-        public static Either<CacheFailure, Option<string>> DecodeBytesToString(byte[] bytes)
+        public static Either<CacheFailure, Option<string>> DecodeBytesToString(Option<byte[]> bytes)
         {
             return
-                TryOption(() => Encoding.UTF8.GetString(bytes))
-                    .ToEither()
-                    .MapLeft(_ => CacheFailureCon.Decoding());
+                bytes.Match(
+                    bs => TryOption(() => Encoding.UTF8.GetString(bs))
+                        .ToEither()
+                        .MapLeft(_ => CacheFailureCon.Decoding()),
+                    () => Right((Option<string>)None));
         }
 
         /// <summary>
@@ -74,12 +76,14 @@ namespace Architecture.DataSource.Cache
         /// - None if json string is null
         /// - Some T object if json string is valid
         /// </returns>
-        public static Either<CacheFailure, Option<T>> DeserializeStringToObject<T>(string jsonString)
+        public static Either<CacheFailure, Option<T>> DeserializeStringToObject<T>(Option<string> jsonString)
         {
-            return
-                TryOption(() => DeserializeObject<T>(jsonString))
-                    .ToEither()
-                    .MapLeft(_ => CacheFailureCon.Deserialization());
+            return jsonString.Match(
+                    json => TryOption(() => DeserializeObject<T>(json))
+                        .ToEither()
+                        .MapLeft(_ => CacheFailureCon.Deserialization()),
+                    () => Right((Option<T>)None));
+
         }
 
         /// <summary>

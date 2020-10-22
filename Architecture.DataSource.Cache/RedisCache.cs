@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Architecture.Domain.Common.Cache;
+using Architecture.Utils.Extensions;
 using LanguageExt;
 using Microsoft.Extensions.Caching.Distributed;
-
 using static LanguageExt.Prelude;
 
 namespace Architecture.DataSource.Cache
@@ -22,8 +22,8 @@ namespace Architecture.DataSource.Cache
         public Either<CacheFailure, Option<T>> Get()
         {
             return CacheHelper.GetBytes(() => _cache.Get(_cacheKey).Apply(Optional))
-                .BindT(CacheHelper.DecodeBytesToString)
-                .BindT(CacheHelper.DeserializeStringToObject<T>);
+                .Bind(CacheHelper.DecodeBytesToString)
+                .Bind(CacheHelper.DeserializeStringToObject<T>);
         }
 
         public Either<CacheFailure, Unit> Set(T item)

@@ -27,8 +27,7 @@ namespace Architecture.Presentation.Controllers
 
             return result.Match(
                 items => Ok(items),
-                HandleFailure,
-                NotFound);
+                HandleFailure);
         }
 
         private IActionResult HandleFailure(TodoFailure failure)
