@@ -4,10 +4,14 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>8</LangVersion>
+    <UserSecretsId>b7b95227-8433-4540-a10a-664cfe6b9dc3</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="LanguageExt.Core" Version="3.4.15" />
     <PackageReference Include="MediatR" Version="8.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <PackageReference Include="NSwag.AspNetCore" Version="13.8.1" />
     <PackageReference Include="NSwag.MSBuild" Version="13.8.1" />
   </ItemGroup>

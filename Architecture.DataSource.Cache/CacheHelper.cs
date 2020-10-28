@@ -58,12 +58,12 @@ namespace Architecture.DataSource.Cache
         /// </returns>
         public static Either<CacheFailure, Option<string>> DecodeBytesToString(Option<byte[]> bytes)
         {
-            return
-                bytes.Match(
-                    bs => TryOption(() => Encoding.UTF8.GetString(bs))
+            return bytes.Match(
+                bs =>
+                    TryOption(() => Encoding.UTF8.GetString(bs))
                         .ToEither()
                         .MapLeft(_ => CacheFailureCon.Decoding()),
-                    () => Right((Option<string>)None));
+                () => Right((Option<string>) None));
         }
 
         /// <summary>
@@ -79,11 +79,10 @@ namespace Architecture.DataSource.Cache
         public static Either<CacheFailure, Option<T>> DeserializeStringToObject<T>(Option<string> jsonString)
         {
             return jsonString.Match(
-                    json => TryOption(() => DeserializeObject<T>(json))
-                        .ToEither()
-                        .MapLeft(_ => CacheFailureCon.Deserialization()),
-                    () => Right((Option<T>)None));
-
+                json => TryOption(() => DeserializeObject<T>(json))
+                    .ToEither()
+                    .MapLeft(_ => CacheFailureCon.Deserialization()),
+                () => Right((Option<T>) None));
         }
 
         /// <summary>
