@@ -1,6 +1,7 @@
 ﻿using System;
 using Architecture.Domain.Common.Cache;
 using Architecture.Domain.Common.Database;
+using Architecture.Domain.Todo;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -9,6 +10,14 @@ namespace Architecture.Presentation.Common
 {
     public static class FailuresHandlers
     {
+        public static string HandleFailure(TodoFailure failure)
+            => failure switch
+            {
+                Cache cache => HandleCacheFailure(cache.CacheFailure),
+                Database database => HandleDatabaseFailure(database.DatabaseFailure),
+                _ => throw new ArgumentOutOfRangeException(nameof(failure))
+            };
+
         public static string HandleCacheFailure(CacheFailure failure)
             => failure switch
             {

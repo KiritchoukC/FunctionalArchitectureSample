@@ -4,6 +4,7 @@ using Architecture.Application.Todo.Queries.GetAllTodos;
 using Architecture.Domain.Todo;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Architecture.Presentation.Extensions;
 
 using static Architecture.Presentation.Common.FailuresHandlers;
 
@@ -21,21 +22,6 @@ namespace Architecture.Presentation.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<IActionResult> GetAll()
-        {
-            var result = await _mediator.Send(new GetAllTodosQuery());
-
-            return result.Match(
-                items => Ok(items),
-                HandleFailure);
-        }
-
-        private IActionResult HandleFailure(TodoFailure failure)
-            => failure switch
-            {
-                Cache cache => Problem(HandleCacheFailure(cache.CacheFailure)),
-                Database database => Problem(HandleDatabaseFailure(database.DatabaseFailure)),
-                _ => throw new ArgumentOutOfRangeException(nameof(failure))
-            };
+        public Task<IActionResult> GetAll() => _mediator.Send(new GetAllTodosQuery()).ToActionResult();
     }
 }
