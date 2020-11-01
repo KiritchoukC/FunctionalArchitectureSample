@@ -12,6 +12,7 @@
       <ProjectReference Include="..\Architecture.DataSource.Cache\Architecture.DataSource.Cache.csproj" />
       <ProjectReference Include="..\Architecture.DataSource.MongoDb\Architecture.DataSource.MongoDb.csproj" />
       <ProjectReference Include="..\Architecture.Domain\Architecture.Domain.csproj" />
+      <ProjectReference Include="..\Architecture.Utils\Architecture.Utils.csproj" />
     </ItemGroup>
 
     <ItemGroup>

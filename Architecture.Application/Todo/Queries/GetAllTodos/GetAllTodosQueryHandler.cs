@@ -26,7 +26,7 @@ namespace Architecture.Application.Todo.Queries.GetAllTodos
             => Fetch(unit)
                 .MapT(Project);
 
-        private async Task<Either<TodoFailure, Seq<TodoItem>>> Fetch(Unit _) => await _todoItemRepository.GetAll().AsTask();
+        private async Task<Either<TodoFailure, Seq<TodoItem>>> Fetch(Unit _) => await _todoItemRepository.GetAllAsync();
 
         private Seq<TodoItemModel> Project(Seq<TodoItem> items) => items.Select(x => new TodoItemModel(x.Id.Value, x.Content.Value, x.IsDone.Value));
     }

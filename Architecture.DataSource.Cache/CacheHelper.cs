@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 using Architecture.Domain.Common.Cache;
 using LanguageExt;
 using static LanguageExt.Prelude;
@@ -11,6 +12,20 @@ namespace Architecture.DataSource.Cache
     public static class CacheHelper
     {
         /// <summary>
+        /// Get item from cache as bytes
+        /// </summary>
+        /// <param name="cacheGet">The function getting the bytes from cache</param>
+        /// <returns>
+        /// - A cache failure
+        /// - None if item does not exist in cache
+        /// - Some bytes if item exist in cache
+        /// </returns>
+        public static Either<CacheFailure, Option<T>> GetBytes<T>(Func<T> cacheGet) =>
+            Try(() => cacheGet().Apply(Optional))
+                .ToEither()
+                .MapLeft(e => CacheFailureCon.Fetch());
+
+        /// <summary>
         /// Get item from cache as bytes asynchronously
         /// </summary>
         /// <param name="cacheGet">The asynchronous function getting the bytes from cache</param>
@@ -19,12 +34,12 @@ namespace Architecture.DataSource.Cache
         /// - None if item does not exist in cache
         /// - Some bytes if item exist in cache
         /// </returns>
-        public static Either<CacheFailure, Option<byte[]>> GetBytes(Func<Option<byte[]>> cacheGet)
-        {
-            return Try(cacheGet)
-                .ToEither()
-                .MapLeft(e => CacheFailureCon.Fetch());
-        }
+        public static async Task<Either<CacheFailure, Option<T>>> GetBytes<T>(Func<Task<T>> cacheGetAsync) =>
+            await Try(async () => (await cacheGetAsync()).Apply(Optional))
+                .Sequence()
+                .Map(o =>
+                    o.ToEither()
+                    .MapLeft(_ => CacheFailureCon.Fetch()));
 
         /// <summary>
         /// Set item to cache as bytes asynchronously
@@ -35,17 +50,11 @@ namespace Architecture.DataSource.Cache
         /// - None
         /// - Some bytes if item exist in cache
         /// </returns>
-        public static Either<CacheFailure, Unit> SetBytes(Action cacheSet)
-        {
-            return Try(() =>
-                {
-                    cacheSet();
-                    return unit;
-                })
+        public static Either<CacheFailure, Unit> SetBytes(Action cacheSet) =>
+            Try(() => { cacheSet(); return unit; })
                 .ToEither()
                 .MapLeft(
                     e => CacheFailureCon.Insert());
-        }
 
         /// <summary>
         /// Decode the bytes array to a string
@@ -56,15 +65,10 @@ namespace Architecture.DataSource.Cache
         /// - None if bytes array is null
         /// - Some string if bytes array is valid
         /// </returns>
-        public static Either<CacheFailure, Option<string>> DecodeBytesToString(Option<byte[]> bytes)
-        {
-            return bytes.Match(
-                bs =>
-                    TryOption(() => Encoding.UTF8.GetString(bs))
-                        .ToEither()
-                        .MapLeft(_ => CacheFailureCon.Decoding()),
-                () => Right((Option<string>) None));
-        }
+        public static Either<CacheFailure, string> DecodeBytesToString(byte[] bytes) =>
+            Try(() => Encoding.UTF8.GetString(bytes))
+                .ToEither()
+                .MapLeft(_ => CacheFailureCon.Decoding());
 
         /// <summary>
         /// Deserialize the json string to type T
@@ -76,14 +80,10 @@ namespace Architecture.DataSource.Cache
         /// - None if json string is null
         /// - Some T object if json string is valid
         /// </returns>
-        public static Either<CacheFailure, Option<T>> DeserializeStringToObject<T>(Option<string> jsonString)
-        {
-            return jsonString.Match(
-                json => TryOption(() => DeserializeObject<T>(json))
-                    .ToEither()
-                    .MapLeft(_ => CacheFailureCon.Deserialization()),
-                () => Right((Option<T>) None));
-        }
+        public static Either<CacheFailure, T> DeserializeStringToObject<T>(string jsonString) =>
+            Try(() => DeserializeObject<T>(jsonString))
+                .ToEither()
+                .MapLeft(_ => CacheFailureCon.Deserialization());
 
         /// <summary>
         /// Serialize an object to a json string
