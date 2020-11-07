@@ -1,22 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Architecture.Application;
-using Architecture.DataSource.Cache;
-using Architecture.DataSource.MongoDb;
-using Architecture.Infrastructure;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-
 namespace Architecture.Presentation
 {
+    using Architecture.Application;
+    using Architecture.DataSource.Cache;
+    using Architecture.DataSource.MongoDb;
+    using Architecture.Infrastructure;
+
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
+
+    using Serilog;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -34,9 +31,10 @@ namespace Architecture.Presentation
             services.AddInfrastructure();
             services.AddCache(Configuration.GetConnectionString("Cache.Redis"));
             services.AddDatabase(
-                Configuration.GetConnectionString("MongoDb:Connection"), 
+                Configuration.GetConnectionString("MongoDb:Connection"),
                 Configuration.GetConnectionString("MongoDb:Database"));
             services.AddOpenApiDocument();
+            services.AddSingleton<Microsoft.Extensions.Logging.ILogger>(svc => svc.GetRequiredService<ILoggerFactory>().CreateLogger("Global"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,10 +46,11 @@ namespace Architecture.Presentation
             }
 
             app.UseHttpsRedirection();
-            
+
             app.UseOpenApi();
             app.UseSwaggerUi3();
-            
+            app.UseSerilogRequestLogging();
+
             app.UseRouting();
 
             app.UseAuthorization();
