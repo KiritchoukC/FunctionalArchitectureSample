@@ -22,12 +22,14 @@ namespace Architecture.Application.Todo.Queries.GetAllTodos
             _todoItemRepository = todoItemRepository;
         }
 
-        public Task<Either<TodoFailure, Seq<TodoItemModel>>> Handle(GetAllTodosQuery request, CancellationToken token)
-            => Fetch(unit)
+        public Task<Either<TodoFailure, Seq<TodoItemModel>>> Handle(GetAllTodosQuery request, CancellationToken token) =>
+            Fetch(unit)
                 .MapT(Project);
 
-        private async Task<Either<TodoFailure, Seq<TodoItem>>> Fetch(Unit _) => await _todoItemRepository.GetAllAsync();
+        private async Task<Either<TodoFailure, Seq<TodoItem>>> Fetch(Unit _) =>
+            await _todoItemRepository.GetAllAsync();
 
-        private Seq<TodoItemModel> Project(Seq<TodoItem> items) => items.Select(x => new TodoItemModel(x.Id.Value, x.Content.Value, x.IsDone.Value));
+        private Seq<TodoItemModel> Project(Seq<TodoItem> items) =>
+            items.Select(x => new TodoItemModel(x.Id.Value, x.Content.Value, x.IsDone.Value));
     }
 }

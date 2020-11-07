@@ -1,11 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Architecture.Utils.Functions
+﻿namespace Architecture.Utils.Functions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Architecture.Domain.Todo;
+    using LanguageExt;
+    using static LanguageExt.Prelude;
+
     public static class GenericFunctions
     {
         public static TResult Use<TUse, TResult>(TUse objectToUse, Func<TUse, TResult> f) where TUse: IDisposable
@@ -14,5 +17,6 @@ namespace Architecture.Utils.Functions
             return f(o);
         }
 
+        public static Either<TFailure, Option<T>> RightNone<TFailure, T>() => Right(Option<T>.None);
     }
 }

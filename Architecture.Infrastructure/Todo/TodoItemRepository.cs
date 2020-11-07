@@ -9,20 +9,23 @@
     using LanguageExt;
 
     using Microsoft.Extensions.Caching.Distributed;
-
+    using Microsoft.Extensions.Logging;
     using static LanguageExt.Prelude;
 
     public class TodoItemRepository : ITodoItemRepository
     {
         private readonly ITodoItemDataSource _todoItemDataSource;
+        private readonly ILogger _logger;
         private readonly ICache<Seq<TodoItem>> _cache;
 
         public TodoItemRepository(
             IDistributedCache cache,
-            ITodoItemDataSource todoItemDataSource)
+            ITodoItemDataSource todoItemDataSource,
+            ILogger logger)
         {
-            _cache = new RedisCache<Seq<TodoItem>>("TodoItemsCacheKey", cache);
+            _cache = new RedisCache<Seq<TodoItem>>("TodoItemsCacheKey", cache, logger);
             _todoItemDataSource = todoItemDataSource;
+            _logger = logger;
         }
 
         public async Task<Either<TodoFailure, Seq<TodoItem>>> GetAllAsync()
@@ -59,6 +62,12 @@
 
         public async Task<Either<TodoFailure, Unit>> AddAsync(TodoItem item)
         {
+            var persist = fun(
+                (TodoItem todo) =>
+                    TodoItemTranslator.ToDto(todo)
+                    .Apply(_todoItemDataSource.Add)
+                    .MapLeft(TodoFailureCon.Database));
+
             var addItemToSeq = fun(
                 (Option<Seq<TodoItem>> items, TodoItem i) =>
                     items.Match(
@@ -67,18 +76,13 @@
             );
 
             var addToCacheAsync = fun(
-                async (TodoItem i) => (await _cache.GetAsync())
-                    .Bind<Seq<TodoItem>>(xs => Right(addItemToSeq(xs, item)))
-                    .Map(items => _cache.Set(items))
-                    .Flatten()
-                    .MapLeft(TodoFailureCon.Cache)
+                async (TodoItem i) =>
+                    (await _cache.GetAsync())
+                        .Bind<Seq<TodoItem>>(xs => Right(addItemToSeq(xs, item)))
+                        .Map(items => _cache.Set(items))
+                        .Flatten()
+                        .MapLeft(TodoFailureCon.Cache)
             );
-
-            var persist = fun(
-                (TodoItem todo) =>
-                    TodoItemTranslator.ToDto(todo)
-                    .Apply(_todoItemDataSource.Add)
-                    .MapLeft(TodoFailureCon.Database));
 
             return await persist(item).Apply(asTask)
                 .BindT(_ => addToCacheAsync(item));
@@ -89,20 +93,18 @@
             from cacheResult in UpdateCache(dbResult)
             select cacheResult;
 
-        private Either<TodoFailure, Seq<TodoItem>> UpdateCache(Seq<TodoItem> items)
-        {
-            return _cache.Set(items)
+        private Either<TodoFailure, Seq<TodoItem>> UpdateCache(Seq<TodoItem> items) =>
+            _cache.Set(items)
                 .Map(_ => items)
                 .MapLeft(TodoFailureCon.Cache);
-        }
 
-        private Either<TodoFailure, Seq<TodoItem>> GetFromDatabase()
-            => _todoItemDataSource.GetAll()
+        private Either<TodoFailure, Seq<TodoItem>> GetFromDatabase() =>
+            _todoItemDataSource.GetAll()
                 .MapLeft(TodoFailureCon.Database)
                 .MapT(TodoItemTranslator.FromDto);
 
-        private async Task<Either<TodoFailure, Option<Seq<TodoItem>>>> GetFromCacheAsync()
-            => (await _cache.GetAsync())
+        private async Task<Either<TodoFailure, Option<Seq<TodoItem>>>> GetFromCacheAsync() =>
+            (await _cache.GetAsync())
                 .MapLeft(TodoFailureCon.Cache);
     }
 }
