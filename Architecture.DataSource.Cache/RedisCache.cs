@@ -29,17 +29,9 @@
         }
 
         public async Task<Either<CacheFailure, Option<T>>> GetAsync()
-        {
-            var fetchBytes = fun(async () => await CacheHelper.GetBytes(async () => await _cache.GetAsync(_cacheKey)));
-
-            var decodeBytes = fun((byte[] bytes) => CacheHelper.DecodeBytesToString(bytes).Map(Optional));
-
-            var deserializeString = fun((string json) => CacheHelper.DeserializeStringToObject<T>(json).Map(Optional));
-
-            return (await fetchBytes())
-                .MapO(decodeBytes)
-                .MapO(deserializeString);
-        }
+            => (await CacheHelper.GetBytes(async () => await _cache.GetAsync(_cacheKey)))
+                .MapO(CacheHelper.DecodeBytesToString)
+                .MapO(CacheHelper.DeserializeStringToObject<T>);
 
         public Either<CacheFailure, Unit> Set(T item)
             => CacheHelper.SerializeObjectToString(item)
