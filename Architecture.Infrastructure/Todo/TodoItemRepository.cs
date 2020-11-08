@@ -1,11 +1,12 @@
 ﻿namespace Architecture.Infrastructure.Todo
 {
+    using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
 
     using Architecture.DataSource.Cache;
     using Architecture.DataSource.MongoDb.Todo;
     using Architecture.Domain.Todo;
-
+    using Architecture.Utils.Extensions;
     using LanguageExt;
 
     using Microsoft.Extensions.Caching.Distributed;
@@ -42,60 +43,28 @@
                 .Bind(getFromDatabaseIfCacheIsNone);
         }
 
-        public async Task<Either<TodoFailure, Option<TodoItem>>> GetByIdAsync(TodoId id)
-        {
-            var getFromDatabaseIfCacheIsNone =
-                fun(
-                    (Option<Seq<TodoItem>> cacheItems) =>
-                        cacheItems.Map(items => items.Find(x => x.Id == id))
-                            .Flatten()
-                            .Match(
-                                item => Right(Optional(item)),
-                                () =>
-                                    RetrieveFromDatabaseAndFillCache()
-                                        .Map(items => items.Find(x => x.Id == id)))
-                );
+        public async Task<Either<TodoFailure, Option<TodoItem>>> GetByIdAsync(TodoId id) =>
+            await GetAllAsync().MapT(xs => xs.Find(x => x.Id == id));
 
-            return (await GetFromCacheAsync())
-                .Bind(getFromDatabaseIfCacheIsNone);
-        }
-
-        public async Task<Either<TodoFailure, Unit>> AddAsync(TodoItem item)
-        {
-            var persist = fun(
-                (TodoItem todo) =>
-                    TodoItemTranslator.ToDto(todo)
-                    .Apply(_todoItemDataSource.Add)
-                    .MapLeft(TodoFailureCon.Database));
-
-            var addItemToSeq = fun(
-                (Option<Seq<TodoItem>> items, TodoItem i) =>
-                    items.Match(
-                        xs => xs.Add(i),
-                        () => Seq<TodoItem>(i))
-            );
-
-            var addToCacheAsync = fun(
-                async (TodoItem i) =>
-                    (await _cache.GetAsync())
-                        .Bind<Seq<TodoItem>>(xs => Right(addItemToSeq(xs, item)))
-                        .Map(items => _cache.Set(items))
-                        .Flatten()
-                        .MapLeft(TodoFailureCon.Cache)
-            );
-
-            return await persist(item).Apply(asTask)
-                .BindT(_ => addToCacheAsync(item));
-        }
+        public async Task<Either<TodoFailure, Unit>> AddAsync(TodoItem item) =>
+                from cache in await GetAllAsync()
+                from _1 in PersistToDatabase(item)
+                from updatedCache in Right(cache.Add(item))
+                from _2 in UpdateCache(updatedCache)
+                select _2;
 
         private Either<TodoFailure, Seq<TodoItem>> RetrieveFromDatabaseAndFillCache() =>
             from dbResult in GetFromDatabase()
-            from cacheResult in UpdateCache(dbResult)
-            select cacheResult;
+            from _ in UpdateCache(dbResult)
+            select dbResult;
 
-        private Either<TodoFailure, Seq<TodoItem>> UpdateCache(Seq<TodoItem> items) =>
+        private Either<TodoFailure, Unit> PersistToDatabase(TodoItem item) =>
+            TodoItemTranslator.ToDto(item)
+            .Apply(_todoItemDataSource.Add)
+            .MapLeft(TodoFailureCon.Database);
+
+        private Either<TodoFailure, Unit> UpdateCache(Seq<TodoItem> items) =>
             _cache.Set(items)
-                .Map(_ => items)
                 .MapLeft(TodoFailureCon.Cache);
 
         private Either<TodoFailure, Seq<TodoItem>> GetFromDatabase() =>
