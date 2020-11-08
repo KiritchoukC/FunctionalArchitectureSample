@@ -1,11 +1,12 @@
-﻿using System;
-using LanguageExt;
-
-namespace Architecture.Domain.Common.Database
+﻿namespace Architecture.Domain.Common.Database
 {
+    using System;
+    using LanguageExt;
+    using LanguageExt.Common;
+
     [Union]
     public abstract partial class DatabaseFailure
     {
-        public abstract DatabaseFailure Retrieve(Exception ex);
+        public abstract DatabaseFailure Retrieve(Error error);
     }
 }

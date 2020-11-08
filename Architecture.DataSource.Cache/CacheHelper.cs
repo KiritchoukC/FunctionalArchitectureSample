@@ -34,12 +34,10 @@ namespace Architecture.DataSource.Cache
         /// - None if item does not exist in cache
         /// - Some bytes if item exist in cache
         /// </returns>
-        public static async Task<Either<CacheFailure, Option<T>>> GetBytes<T>(Func<Task<T>> cacheGetAsync) =>
-            await Try(async () => (await cacheGetAsync()).Apply(Optional))
-                .Sequence()
-                .Map(o =>
-                    o.ToEither()
-                    .MapLeft(_ => CacheFailureCon.Fetch()));
+        public static EitherAsync<CacheFailure, Option<T>> GetBytes<T>(Func<Task<T>> cacheGetAsync) =>
+            TryAsync(async () => (await cacheGetAsync()).Apply(Optional))
+                .ToEither()
+                .MapLeft(_ => CacheFailureCon.Fetch());
 
         /// <summary>
         /// Set item to cache as bytes asynchronously
@@ -65,9 +63,9 @@ namespace Architecture.DataSource.Cache
         /// - None if bytes array is null
         /// - Some string if bytes array is valid
         /// </returns>
-        public static Either<CacheFailure, string> DecodeBytesToString(byte[] bytes) =>
+        public static EitherAsync<CacheFailure, string> DecodeBytesToString(byte[] bytes) =>
             Try(() => Encoding.UTF8.GetString(bytes))
-                .ToEither()
+                .ToEitherAsync()
                 .MapLeft(_ => CacheFailureCon.Decoding());
 
         /// <summary>
@@ -80,9 +78,9 @@ namespace Architecture.DataSource.Cache
         /// - None if json string is null
         /// - Some T object if json string is valid
         /// </returns>
-        public static Either<CacheFailure, T> DeserializeStringToObject<T>(string jsonString) =>
+        public static EitherAsync<CacheFailure, T> DeserializeStringToObject<T>(string jsonString) =>
             Try(() => DeserializeObject<T>(jsonString))
-                .ToEither()
+                .ToEitherAsync()
                 .MapLeft(_ => CacheFailureCon.Deserialization());
 
         /// <summary>

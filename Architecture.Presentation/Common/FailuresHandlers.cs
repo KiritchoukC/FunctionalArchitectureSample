@@ -33,7 +33,7 @@ namespace Architecture.Presentation.Common
         public static string HandleDatabaseFailure(DatabaseFailure failure)
             => failure switch
             {
-                Retrieve retrieve => retrieve.Ex.ToString(),
+                Retrieve retrieve => retrieve.Error.ToString(),
                 _ => throw new ArgumentOutOfRangeException(nameof(failure))
             };
     }

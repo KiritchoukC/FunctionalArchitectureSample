@@ -6,7 +6,7 @@ namespace Architecture.DataSource.Cache
 {
     public interface ICache<T>
     {
-        Task<Either<CacheFailure, Option<T>>> GetAsync();
+        EitherAsync<CacheFailure, Option<T>> GetAsync();
         Either<CacheFailure, Unit> Set(T item);
     }
 }

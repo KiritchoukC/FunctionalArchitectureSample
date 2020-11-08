@@ -17,6 +17,6 @@
             return f(o);
         }
 
-        public static Either<TFailure, Option<T>> RightNone<TFailure, T>() => Right(Option<T>.None);
+        public static Either<TFailure, TResult> Right<TFailure, TResult>(TResult value) => Prelude.Right(value);
     }
 }

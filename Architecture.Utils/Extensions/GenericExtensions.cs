@@ -13,14 +13,24 @@
             return @this;
         }
 
-        public static Either<TFailure, Option<T>> BindO<TFailure, T>(
-            this Either<TFailure, Option<T>> @this,
-            Func<T, Either<TFailure, T>> f)
-            => @this.Bind(opt => opt.Match(t => f(t).Map(Optional), () => Right(Option<T>.None)));
+        public static Either<TFailure, Option<TResult>> BindO<TFailure, TResult>(
+            this Either<TFailure, Option<TResult>> @this,
+            Func<TResult, Either<TFailure, TResult>> f)
+            => @this.Bind(opt => opt.Match(t => f(t).Map(Optional), () => Right<TFailure, Option<TResult>>(Option<TResult>.None)));
 
         public static Either<TFailure, Option<TResult>> MapO<TFailure, TSource, TResult>(
             this Either<TFailure, Option<TSource>> @this,
             Func<TSource, Either<TFailure, TResult>> f)
-            => @this.Bind(opt => opt.Match(t => f(t).Map(Optional), () => Right(Option<TResult>.None)));
+            => @this.Bind(opt => opt.Match(t => f(t).Map(Optional), () => Right<TFailure, Option<TResult>>(Option<TResult>.None)));
+
+        public static EitherAsync<TFailure, Option<TResult>> BindO<TFailure, TResult>(
+            this EitherAsync<TFailure, Option<TResult>> @this,
+            Func<TResult, EitherAsync<TFailure, TResult>> f)
+            => @this.Bind(opt => opt.Match(t => f(t).Map(Optional), () => Right<TFailure, Option<TResult>>(Option<TResult>.None).ToAsync()));
+
+        public static EitherAsync<TFailure, Option<TResult>> MapO<TFailure, TSource, TResult>(
+            this EitherAsync<TFailure, Option<TSource>> @this,
+            Func<TSource, EitherAsync<TFailure, TResult>> f)
+            => @this.Bind(opt => opt.Match(t => f(t).Map(Optional), () => Right<TFailure, Option<TResult>>(Option<TResult>.None).ToAsync()));
     }
 }

@@ -28,8 +28,8 @@
             _logger = logger;
         }
 
-        public async Task<Either<CacheFailure, Option<T>>> GetAsync()
-            => (await CacheHelper.GetBytes(async () => await _cache.GetAsync(_cacheKey)))
+        public EitherAsync<CacheFailure, Option<T>> GetAsync() =>
+            CacheHelper.GetBytes(async () => await _cache.GetAsync(_cacheKey))
                 .MapO(CacheHelper.DecodeBytesToString)
                 .MapO(CacheHelper.DeserializeStringToObject<T>);
 
@@ -37,7 +37,5 @@
             => CacheHelper.SerializeObjectToString(item)
                 .Bind(CacheHelper.EncodeStringToBytes)
                 .Bind(bytes => CacheHelper.SetBytes(() => _cache.Set(_cacheKey, bytes)));
-
-
     }
 }

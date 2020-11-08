@@ -25,27 +25,27 @@ namespace Architecture.DataSource.MongoDb.Todo
                 .GetCollection<TodoItemDto>("items");
         }
 
-        public Either<DatabaseFailure, Seq<TodoItemDto>> GetAll()
-        {
-            return Try(() => _todoCollection.Find(x => true).ToList())
-                .ToEither()
-                .MapLeft(DatabaseFailureCon.Retrieve)
-                .Map(items => items.ToSeq());
-        }
+        public EitherAsync<DatabaseFailure, Seq<TodoItemDto>> GetAllAsync() =>
+            GetAsync(async () => await _todoCollection.FindAsync(x => true))
+                .MapLeft(DatabaseFailureCon.Retrieve);
 
-        public Either<DatabaseFailure, Option<TodoItem>> GetById(Guid id)
+        public EitherAsync<DatabaseFailure, Option<TodoItem>> GetByIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Either<DatabaseFailure, Unit> Add(TodoItemDto todoItem)
+        public EitherAsync<DatabaseFailure, Unit> AddAsync(TodoItemDto todoItem)
         {
             throw new NotImplementedException();
         }
 
-        public Either<DatabaseFailure, Unit> Update(TodoItemDto todoItem)
+        public EitherAsync<DatabaseFailure, Unit> UpdateAsync(TodoItemDto todoItem)
         {
             throw new NotImplementedException();
         }
+
+        private EitherAsync<Error, Seq<T>> GetAsync<T>(Func<Task<IAsyncCursor<T>>> f) =>
+            from t in TryAsync(f).ToEither()
+            select t.ToList().ToSeq();
     }
 }

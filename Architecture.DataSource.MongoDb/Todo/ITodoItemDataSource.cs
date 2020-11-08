@@ -13,9 +13,9 @@ namespace Architecture.DataSource.MongoDb.Todo
 
     public interface ITodoItemDataSource
     {
-        Either<DatabaseFailure, Seq<TodoItemDto>> GetAll();
-        Either<DatabaseFailure, Option<TodoItem>> GetById(Guid id);
-        Either<DatabaseFailure, Unit> Add(TodoItemDto todoItem);
-        Either<DatabaseFailure, Unit> Update(TodoItemDto todoItem);
+        EitherAsync<DatabaseFailure, Seq<TodoItemDto>> GetAllAsync();
+        EitherAsync<DatabaseFailure, Option<TodoItem>> GetByIdAsync(Guid id);
+        EitherAsync<DatabaseFailure, Unit> AddAsync(TodoItemDto todoItem);
+        EitherAsync<DatabaseFailure, Unit> UpdateAsync(TodoItemDto todoItem);
     }
 }
