@@ -12,20 +12,6 @@ namespace Architecture.DataSource.Cache
     public static class CacheHelper
     {
         /// <summary>
-        /// Get item from cache as bytes
-        /// </summary>
-        /// <param name="cacheGet">The function getting the bytes from cache</param>
-        /// <returns>
-        /// - A cache failure
-        /// - None if item does not exist in cache
-        /// - Some bytes if item exist in cache
-        /// </returns>
-        public static Either<CacheFailure, Option<T>> GetBytes<T>(Func<T> cacheGet) =>
-            Try(() => cacheGet().Apply(Optional))
-                .ToEither()
-                .MapLeft(e => CacheFailureCon.Fetch());
-
-        /// <summary>
         /// Get item from cache as bytes asynchronously
         /// </summary>
         /// <param name="cacheGet">The asynchronous function getting the bytes from cache</param>
@@ -48,11 +34,10 @@ namespace Architecture.DataSource.Cache
         /// - None
         /// - Some bytes if item exist in cache
         /// </returns>
-        public static Either<CacheFailure, Unit> SetBytes(Action cacheSet) =>
-            Try(() => { cacheSet(); return unit; })
+        public static EitherAsync<CacheFailure, Unit> SetBytes(Func<Task> cacheSet) =>
+            TryAsync(async () => { await cacheSet(); return unit; })
                 .ToEither()
-                .MapLeft(
-                    e => CacheFailureCon.Insert());
+                .MapLeft(_ => CacheFailureCon.Insert());
 
         /// <summary>
         /// Decode the bytes array to a string
@@ -93,13 +78,13 @@ namespace Architecture.DataSource.Cache
         /// - None if item is null
         /// - Some json string
         /// </returns>
-        public static Either<CacheFailure, string> SerializeObjectToString<T>(T item)
+        public static EitherAsync<CacheFailure, string> SerializeObjectToString<T>(T item)
         {
             return
                 Try(() => SerializeObject(item))
                     .ToEither()
-                    .MapLeft(
-                        _ => CacheFailureCon.Serialization());
+                    .MapLeft(_ => CacheFailureCon.Serialization())
+                    .ToAsync();
         }
 
         /// <summary>
@@ -111,13 +96,13 @@ namespace Architecture.DataSource.Cache
         /// - None
         /// - Some bytes array
         /// </returns>
-        public static Either<CacheFailure, byte[]> EncodeStringToBytes(string jsonStr)
+        public static EitherAsync<CacheFailure, byte[]> EncodeStringToBytes(string jsonStr)
         {
             return
                 Try(() => Encoding.UTF8.GetBytes(jsonStr))
                     .ToEither()
-                    .MapLeft(
-                        e => CacheFailureCon.Encoding());
+                    .MapLeft(_ => CacheFailureCon.Encoding())
+                    .ToAsync();
         }
     }
 }

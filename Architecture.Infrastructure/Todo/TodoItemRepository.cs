@@ -59,8 +59,8 @@
                 .MapLeft(TodoFailureCon.Database);
 
         private EitherAsync<TodoFailure, Unit> UpdateCache(Seq<TodoItem> items) =>
-            _cache.Set(items)
-                .MapLeft(TodoFailureCon.Cache).ToAsync();
+            _cache.SetAsync(items)
+                .MapLeft(TodoFailureCon.Cache);
 
         private EitherAsync<TodoFailure, Seq<TodoItem>> RetrieveAsync() =>
             _todoItemDataSource.GetAllAsync()

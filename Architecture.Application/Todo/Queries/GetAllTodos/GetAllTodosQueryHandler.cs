@@ -23,10 +23,10 @@ namespace Architecture.Application.Todo.Queries.GetAllTodos
         }
 
         public Task<Either<TodoFailure, Seq<TodoItemModel>>> Handle(GetAllTodosQuery request, CancellationToken token) =>
-            Fetch(unit)
+            Fetch()
                 .MapT(Project);
 
-        private async Task<Either<TodoFailure, Seq<TodoItem>>> Fetch(Unit _) =>
+        private async Task<Either<TodoFailure, Seq<TodoItem>>> Fetch() =>
             await _todoItemRepository.GetAllAsync().ToEither();
 
         private Seq<TodoItemModel> Project(Seq<TodoItem> items) =>

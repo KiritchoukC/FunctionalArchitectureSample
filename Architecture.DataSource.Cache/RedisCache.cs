@@ -1,16 +1,12 @@
 ﻿namespace Architecture.DataSource.Cache
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Runtime.CompilerServices;
-    using System.Threading.Tasks;
     using Architecture.Domain.Common.Cache;
     using Architecture.Utils.Extensions;
+
     using LanguageExt;
+
     using Microsoft.Extensions.Caching.Distributed;
     using Microsoft.Extensions.Logging;
-    using static LanguageExt.Prelude;
-    using static Architecture.Utils.Functions.GenericFunctions;
 
     public class RedisCache<T> : ICache<T>
     {
@@ -29,13 +25,13 @@
         }
 
         public EitherAsync<CacheFailure, Option<T>> GetAsync() =>
-            CacheHelper.GetBytes(async () => await _cache.GetAsync(_cacheKey))
+            CacheHelper.GetBytes(() => _cache.GetAsync(_cacheKey))
                 .MapO(CacheHelper.DecodeBytesToString)
                 .MapO(CacheHelper.DeserializeStringToObject<T>);
 
-        public Either<CacheFailure, Unit> Set(T item)
+        public EitherAsync<CacheFailure, Unit> SetAsync(T item)
             => CacheHelper.SerializeObjectToString(item)
                 .Bind(CacheHelper.EncodeStringToBytes)
-                .Bind(bytes => CacheHelper.SetBytes(() => _cache.Set(_cacheKey, bytes)));
+                .Bind(bytes => CacheHelper.SetBytes(() => _cache.SetAsync(_cacheKey, bytes)));
     }
 }
