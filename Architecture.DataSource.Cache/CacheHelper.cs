@@ -1,14 +1,16 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-using Architecture.Domain.Common.Cache;
-using LanguageExt;
-using static LanguageExt.Prelude;
-using static Newtonsoft.Json.JsonConvert;
-using Encoding = System.Text.Encoding;
-
+﻿
 namespace Architecture.DataSource.Cache
 {
+    using System;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Architecture.Domain.Common.Cache;
+    using LanguageExt;
+    using static LanguageExt.Prelude;
+    using static Newtonsoft.Json.JsonConvert;
+    using static Architecture.Utils.Constructors.Constructors;
+    using Encoding = System.Text.Encoding;
+
     public static class CacheHelper
     {
         /// <summary>

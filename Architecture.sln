@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Architecture.Infrastructure
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Architecture.DataSource.MongoDb", "Architecture.DataSource.MongoDb\Architecture.DataSource.MongoDb.csproj", "{F5AF783C-14B9-4E34-BC05-FDCE2F644D93}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Architecture.Domain", "Architecture.Domain\Architecture.Domain.csproj", "{88F0C699-378F-458E-B0C9-23230E9DDAE8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Architecture.DataSource.Cache", "Architecture.DataSource.Cache\Architecture.DataSource.Cache.csproj", "{F6711D72-CF62-4378-962A-E5AB818CEB3A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Architecture.Presentation", "Architecture.Presentation\Architecture.Presentation.csproj", "{1CCB49D9-8355-474E-852A-5681AAB3E8A3}"
@@ -22,6 +20,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Architecture.Utils", "Architecture.Utils\Architecture.Utils.csproj", "{54787647-7783-4FE1-B3AD-4E5DC6540443}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{B66A9000-B9B3-49C0-90FF-BE8E87BBD467}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Architecture.Domain", "Architecture.Domain\Architecture.Domain.csproj", "{297E0D22-6420-4973-BFDC-BC811A79732F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,6 @@ Global
 		{F5AF783C-14B9-4E34-BC05-FDCE2F644D93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5AF783C-14B9-4E34-BC05-FDCE2F644D93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5AF783C-14B9-4E34-BC05-FDCE2F644D93}.Release|Any CPU.Build.0 = Release|Any CPU
-		{88F0C699-378F-458E-B0C9-23230E9DDAE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{88F0C699-378F-458E-B0C9-23230E9DDAE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{88F0C699-378F-458E-B0C9-23230E9DDAE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{88F0C699-378F-458E-B0C9-23230E9DDAE8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F6711D72-CF62-4378-962A-E5AB818CEB3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F6711D72-CF62-4378-962A-E5AB818CEB3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6711D72-CF62-4378-962A-E5AB818CEB3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -61,6 +57,10 @@ Global
 		{B66A9000-B9B3-49C0-90FF-BE8E87BBD467}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B66A9000-B9B3-49C0-90FF-BE8E87BBD467}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B66A9000-B9B3-49C0-90FF-BE8E87BBD467}.Release|Any CPU.Build.0 = Release|Any CPU
+		{297E0D22-6420-4973-BFDC-BC811A79732F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{297E0D22-6420-4973-BFDC-BC811A79732F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{297E0D22-6420-4973-BFDC-BC811A79732F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{297E0D22-6420-4973-BFDC-BC811A79732F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,10 +69,10 @@ Global
 		{4347D35F-C336-4885-BE76-41453CB9DEC7} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
 		{B221F557-7326-428A-BA82-485F5968F904} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
 		{F5AF783C-14B9-4E34-BC05-FDCE2F644D93} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
-		{88F0C699-378F-458E-B0C9-23230E9DDAE8} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
 		{F6711D72-CF62-4378-962A-E5AB818CEB3A} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
 		{1CCB49D9-8355-474E-852A-5681AAB3E8A3} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
 		{54787647-7783-4FE1-B3AD-4E5DC6540443} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
+		{297E0D22-6420-4973-BFDC-BC811A79732F} = {D1DE6E86-E823-45AD-B8AE-6E5595F436D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B7A49DE-3087-43EC-91EE-DB5CBD8D0CF9}

@@ -1,19 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Architecture.Domain.Common.Database;
-using Architecture.Domain.Todo;
-using LanguageExt;
-using LanguageExt.Common;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using static LanguageExt.Prelude;
-
+﻿
 namespace Architecture.DataSource.MongoDb.Todo
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Architecture.Domain.Common.Database;
+    using Architecture.Domain.Todo;
+    using LanguageExt;
+    using LanguageExt.Common;
+    using MongoDB.Bson;
+    using MongoDB.Driver;
+    using static LanguageExt.Prelude;
+    using static Architecture.Utils.Constructors.Constructors;
+
     public class TodoItemDataSource : ITodoItemDataSource
     {
         private readonly IMongoCollection<TodoItemDto> _todoCollection;

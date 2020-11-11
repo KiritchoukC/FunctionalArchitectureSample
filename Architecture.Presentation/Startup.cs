@@ -34,7 +34,7 @@ namespace Architecture.Presentation
                 Configuration.GetConnectionString("MongoDb:Connection"),
                 Configuration.GetConnectionString("MongoDb:Database"));
             services.AddOpenApiDocument();
-            services.AddSingleton<Microsoft.Extensions.Logging.ILogger>(svc => svc.GetRequiredService<ILoggerFactory>().CreateLogger("Global"));
+            services.AddSingleton(svc => svc.GetRequiredService<ILoggerFactory>().CreateLogger("Global"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

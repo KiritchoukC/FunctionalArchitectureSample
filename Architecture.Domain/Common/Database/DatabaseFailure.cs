@@ -1,12 +1,15 @@
 ﻿namespace Architecture.Domain.Common.Database
 {
-    using System;
-    using LanguageExt;
     using LanguageExt.Common;
 
-    [Union]
-    public abstract partial class DatabaseFailure
+    using OneOf;
+
+    public abstract class DatabaseFailure : OneOfBase<DatabaseFailure.Retrieve>
     {
-        public abstract DatabaseFailure Retrieve(Error error);
+        public class Retrieve : DatabaseFailure
+        {
+            public readonly Error Error;
+            public Retrieve(Error error) => Error = error;
+        }
     }
 }
