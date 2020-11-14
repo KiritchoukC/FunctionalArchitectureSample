@@ -14,18 +14,21 @@
     using static LanguageExt.Prelude;
     using static Architecture.Utils.Constructors.Constructors;
     using Architecture.Utils.Functions;
+    using System.Collections.Generic;
+    using Architecture.Utils.Extensions;
+    using Architecture.Domain.Common.Cache;
 
     public class TodoItemRepository : ITodoItemRepository
     {
         private readonly ITodoItemDataSource _todoItemDataSource;
-        private readonly ICache<Seq<TodoItem>> _cache;
+        private readonly ICache<List<TodoItem>> _cache;
 
         public TodoItemRepository(
             IDistributedCache cache,
             ITodoItemDataSource todoItemDataSource,
             ILogger logger)
         {
-            _cache = new RedisCache<Seq<TodoItem>>("TodoItemsCacheKey", cache, logger);
+            _cache = new RedisCache<List<TodoItem>>("TodoItemsCacheKey", cache, logger);
             _todoItemDataSource = todoItemDataSource;
         }
 
@@ -60,7 +63,7 @@
                 .MapLeft(TodoFailureCon.Database);
 
         private EitherAsync<TodoFailure, Unit> UpdateCache(Seq<TodoItem> items) =>
-            _cache.SetAsync(items)
+            _cache.SetAsync(items.ToList())
                 .MapLeft(TodoFailureCon.Cache);
 
         private EitherAsync<TodoFailure, Seq<TodoItem>> RetrieveAsync() =>
@@ -70,7 +73,8 @@
 
         private EitherAsync<TodoFailure, Option<Seq<TodoItem>>> RetrieveCacheAsync() =>
             _cache.GetAsync()
-                .MapLeft(TodoFailureCon.Cache);
+                .MapLeft(TodoFailureCon.Cache)
+                .MapO<TodoFailure, List<TodoItem>, Seq<TodoItem>>(items => new Seq<TodoItem>(items));
 
         private static Either<TodoFailure, T> Right<T>(T value) => GenericFunctions.Right<TodoFailure, T>(value);
 

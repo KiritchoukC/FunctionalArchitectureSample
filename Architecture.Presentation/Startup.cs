@@ -12,6 +12,8 @@ namespace Architecture.Presentation
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
+    using Newtonsoft.Json;
+
     using Serilog;
 
     public class Startup
@@ -26,7 +28,8 @@ namespace Architecture.Presentation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
             services.AddApplication();
             services.AddInfrastructure();
             services.AddCache(Configuration.GetConnectionString("Cache.Redis"));
@@ -49,7 +52,7 @@ namespace Architecture.Presentation
 
             app.UseOpenApi();
             app.UseSwaggerUi3();
-            app.UseSerilogRequestLogging();
+            //app.UseSerilogRequestLogging();
 
             app.UseRouting();
 

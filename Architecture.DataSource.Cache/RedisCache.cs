@@ -26,7 +26,6 @@
 
         public EitherAsync<CacheFailure, Option<T>> GetAsync() =>
             CacheHelper.GetBytes(() => _cache.GetStringAsync(_cacheKey))
-                .LogInfo(_logger, x => "------------------- " + x.ToString())
                 .MapO(CacheHelper.DeserializeStringToObject<T>);
 
         public EitherAsync<CacheFailure, Unit> SetAsync(T item)

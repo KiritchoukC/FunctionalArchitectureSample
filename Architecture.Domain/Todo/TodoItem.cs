@@ -6,6 +6,7 @@
     using LanguageExt.Common;
 
     using static LanguageExt.Prelude;
+    using static Validators.Validators;
 
     public record TodoContent
     {
@@ -13,10 +14,18 @@
 
         private TodoContent(string value) => Value = value;
 
+        private static Validation<string, string> Validation(string value) =>
+            NotNull(value)
+                .Bind(NotEmpty)
+                .Bind(MaxStrLength(300));
+
+        private static Validation<Error, string> Validate(string value) =>
+            Validation(value)
+                .MapFail(error => Error.New("Content " + error));
+
         public static Validation<Error, TodoContent> New(string value) =>
-            string.IsNullOrWhiteSpace(value) ? Error.New("Todo content should not be empty.")
-            : value.Length > 300 ? Error.New("Todo content should not be empty.")
-            : Success<Error, TodoContent>(new(value));
+            Validate(value)
+                .Map(str => new TodoContent(str));
     }
 
     public record TodoId
@@ -35,8 +44,16 @@
 
         private TodoIsDone(bool value) => Value = value;
 
-        public static Validation<Error, TodoIsDone> New(bool value) =>
-            Success<Error, TodoIsDone>(new(value));
+        private static Validation<string, bool> Validation(bool? value) =>
+            NotNull(value);
+
+        private static Validation<Error, bool> Validate(bool? value) =>
+            Validation(value)
+                .MapFail(error => Error.New("IsDone " + error));
+
+        public static Validation<Error, TodoIsDone> New(bool? value) =>
+            Validate(value)
+                .Map(x => new TodoIsDone(x));
     }
 
     public record TodoItem
@@ -48,11 +65,8 @@
         private TodoItem(TodoId id, TodoIsDone isDone, TodoContent content) =>
             (Id, IsDone, Content) = (id, isDone, content);
 
-        public static Validation<Error, TodoItem> New(Guid id, bool isDone, string content) =>
-            from todoId in TodoId.New(id)
-            from todoIsDone in TodoIsDone.New(isDone)
-            from todoContent in TodoContent.New(content)
-            select new TodoItem(todoId, todoIsDone, todoContent);
-
+        public static Validation<Error, TodoItem> New(Guid id, bool? isDone, string? content) =>
+            (TodoId.New(id), TodoIsDone.New(isDone), TodoContent.New(content))
+                .Apply((id, isDone, content) => new TodoItem(id, isDone, content));
     }
 }
