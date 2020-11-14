@@ -25,13 +25,12 @@
         }
 
         public EitherAsync<CacheFailure, Option<T>> GetAsync() =>
-            CacheHelper.GetBytes(() => _cache.GetAsync(_cacheKey))
-                .MapO(CacheHelper.DecodeBytesToString)
+            CacheHelper.GetBytes(() => _cache.GetStringAsync(_cacheKey))
+                .LogInfo(_logger, x => "------------------- " + x.ToString())
                 .MapO(CacheHelper.DeserializeStringToObject<T>);
 
         public EitherAsync<CacheFailure, Unit> SetAsync(T item)
             => CacheHelper.SerializeObjectToString(item)
-                .Bind(CacheHelper.EncodeStringToBytes)
-                .Bind(bytes => CacheHelper.SetBytes(() => _cache.SetAsync(_cacheKey, bytes)));
+                .Bind(jsonStr => CacheHelper.SetBytes(() => _cache.SetStringAsync(_cacheKey, jsonStr)));
     }
 }

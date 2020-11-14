@@ -1,16 +1,13 @@
-﻿using System.Collections.Immutable;
-using System.Threading;
-using System.Threading.Tasks;
-using Architecture.Domain.Todo;
-using Architecture.Infrastructure.Todo;
-using LanguageExt;
-using MediatR;
-using Unit = LanguageExt.Unit;
-
-using static LanguageExt.Prelude;
-
-namespace Architecture.Application.Todo.Queries.GetAllTodos
+﻿namespace Architecture.Application.Todo.Queries.GetAllTodos
 {
+    using System.Collections.Immutable;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Architecture.Domain.Todo;
+    using Architecture.Infrastructure.Todo;
+    using LanguageExt;
+    using MediatR;
+
     public class GetAllTodosQuery : IRequest<Either<TodoFailure, Seq<TodoItemModel>>> { }
 
     public class GetAllTodosQueryHandler : IRequestHandler<GetAllTodosQuery, Either<TodoFailure, Seq<TodoItemModel>>>

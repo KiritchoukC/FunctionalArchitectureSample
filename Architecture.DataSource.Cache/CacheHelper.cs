@@ -2,14 +2,12 @@
 namespace Architecture.DataSource.Cache
 {
     using System;
-    using System.Text;
     using System.Threading.Tasks;
     using Architecture.Domain.Common.Cache;
     using LanguageExt;
     using static LanguageExt.Prelude;
-    using static Newtonsoft.Json.JsonConvert;
     using static Architecture.Utils.Constructors.Constructors;
-    using Encoding = System.Text.Encoding;
+    using System.Text.Json;
 
     public static class CacheHelper
     {
@@ -42,20 +40,6 @@ namespace Architecture.DataSource.Cache
                 .MapLeft(_ => CacheFailureCon.Insert());
 
         /// <summary>
-        /// Decode the bytes array to a string
-        /// </summary>
-        /// <param name="bytes">The bytes to decode</param>
-        /// <returns>
-        /// - A decode failure
-        /// - None if bytes array is null
-        /// - Some string if bytes array is valid
-        /// </returns>
-        public static EitherAsync<CacheFailure, string> DecodeBytesToString(byte[] bytes) =>
-            Try(() => Encoding.UTF8.GetString(bytes))
-                .ToEitherAsync()
-                .MapLeft(_ => CacheFailureCon.Decoding());
-
-        /// <summary>
         /// Deserialize the json string to type T
         /// </summary>
         /// <param name="jsonString">The json string to deserialize</param>
@@ -66,7 +50,7 @@ namespace Architecture.DataSource.Cache
         /// - Some T object if json string is valid
         /// </returns>
         public static EitherAsync<CacheFailure, T> DeserializeStringToObject<T>(string jsonString) =>
-            Try(() => DeserializeObject<T>(jsonString))
+            Try(() => JsonSerializer.Deserialize<T>(jsonString) ?? throw new Exception("Deserialized object is null"))
                 .ToEitherAsync()
                 .MapLeft(_ => CacheFailureCon.Deserialization());
 
@@ -80,31 +64,10 @@ namespace Architecture.DataSource.Cache
         /// - None if item is null
         /// - Some json string
         /// </returns>
-        public static EitherAsync<CacheFailure, string> SerializeObjectToString<T>(T item)
-        {
-            return
-                Try(() => SerializeObject(item))
+        public static EitherAsync<CacheFailure, string> SerializeObjectToString<T>(T item) =>
+                Try(() => JsonSerializer.Serialize(item))
                     .ToEither()
                     .MapLeft(_ => CacheFailureCon.Serialization())
                     .ToAsync();
-        }
-
-        /// <summary>
-        /// Encode the string to a bytes array
-        /// </summary>
-        /// <param name="jsonStr">The json string to encode</param>
-        /// <returns>
-        /// - A encoding failure
-        /// - None
-        /// - Some bytes array
-        /// </returns>
-        public static EitherAsync<CacheFailure, byte[]> EncodeStringToBytes(string jsonStr)
-        {
-            return
-                Try(() => Encoding.UTF8.GetBytes(jsonStr))
-                    .ToEither()
-                    .MapLeft(_ => CacheFailureCon.Encoding())
-                    .ToAsync();
-        }
     }
 }

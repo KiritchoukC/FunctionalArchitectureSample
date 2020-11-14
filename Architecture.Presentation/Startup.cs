@@ -45,7 +45,7 @@ namespace Architecture.Presentation
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseOpenApi();
             app.UseSwaggerUi3();

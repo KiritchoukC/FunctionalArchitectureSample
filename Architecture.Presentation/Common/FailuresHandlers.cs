@@ -10,14 +10,14 @@ namespace Architecture.Presentation.Common
         public static string HandleFailure(TodoFailure failure)
             => failure.Match(
                 cacheFailure => HandleCacheFailure(cacheFailure.Failure),
-                databaseFailure => HandleDatabaseFailure(databaseFailure.Failure));
+                databaseFailure => HandleDatabaseFailure(databaseFailure.Failure),
+                validationFailure => validationFailure.ErrorsJoined(),
+                translationFailure => translationFailure.ErrorsJoined());
 
         public static string HandleCacheFailure(CacheFailure failure)
             => failure.Match(
                 fetchFailure => "An error occured with the cache decoding",
                 insertFailure => "An error occured with the cache deserialization",
-                decodingFailure => "An error occured with the cache encoding",
-                encodingFailure => "An error occured while inserting item in cache",
                 serializationFailure => "An error occured while getting item from cache",
                 deserializationFailure => "An error occured with the cache serialization");
 

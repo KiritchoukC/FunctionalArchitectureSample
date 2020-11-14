@@ -5,6 +5,7 @@ namespace Architecture.Utils.Constructors
     using Architecture.Domain.Common.Database;
     using Architecture.Domain.Todo;
 
+    using LanguageExt;
     using LanguageExt.Common;
 
     public static partial class Constructors
@@ -13,8 +14,6 @@ namespace Architecture.Utils.Constructors
         {
             public static CacheFailure Fetch() => new CacheFailure.Fetch();
             public static CacheFailure Insert() => new CacheFailure.Insert();
-            public static CacheFailure Decoding() => new CacheFailure.Decoding();
-            public static CacheFailure Encoding() => new CacheFailure.Encoding();
             public static CacheFailure Serialization() => new CacheFailure.Serialization();
             public static CacheFailure Deserialization() => new CacheFailure.Deserialization();
         }
@@ -26,6 +25,8 @@ namespace Architecture.Utils.Constructors
         {
             public static TodoFailure Database(DatabaseFailure failure) => new TodoFailure.Database(failure);
             public static TodoFailure Cache(CacheFailure failure) => new TodoFailure.Cache(failure);
+            public static TodoFailure Validation(Seq<Error> errors) => new TodoFailure.Validation(errors);
+            public static TodoFailure Translation(Seq<Error> errors) => new TodoFailure.Translation(errors);
         }
     }
 }

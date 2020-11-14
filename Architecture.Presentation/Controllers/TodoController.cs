@@ -1,15 +1,15 @@
-﻿using System;
-using System.Threading.Tasks;
-using Architecture.Application.Todo.Queries.GetAllTodos;
-using Architecture.Domain.Todo;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Architecture.Presentation.Extensions;
-
-using static Architecture.Presentation.Common.FailuresHandlers;
-
-namespace Architecture.Presentation.Controllers
+﻿namespace Architecture.Presentation.Controllers
 {
+    using System.Threading.Tasks;
+
+    using Architecture.Application.Todo.Commands.AddTodo;
+    using Architecture.Application.Todo.Queries.GetAllTodos;
+    using Architecture.Presentation.Extensions;
+
+    using MediatR;
+
+    using Microsoft.AspNetCore.Mvc;
+
     [ApiController]
     [Route("api/todo")]
     public class TodoController : ControllerBase
@@ -23,5 +23,8 @@ namespace Architecture.Presentation.Controllers
 
         [HttpGet("all")]
         public Task<IActionResult> GetAll() => _mediator.Send(new GetAllTodosQuery()).ToActionResult();
+
+        [HttpPost("add")]
+        public Task<IActionResult> Add(AddTodoCommand command) => _mediator.Send(command).ToActionResult();
     }
 }

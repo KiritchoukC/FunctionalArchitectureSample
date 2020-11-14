@@ -1,13 +1,16 @@
-﻿using Architecture.DataSource.MongoDb.Todo;
-using Architecture.Domain.Todo;
-using static Architecture.Utils.Constructors.Constructors;
-
+﻿
 namespace Architecture.Infrastructure.Todo
 {
+    using Architecture.DataSource.MongoDb.Todo;
+    using Architecture.Domain.Todo;
+
+    using LanguageExt;
+    using LanguageExt.Common;
+
     public static class TodoItemTranslator
     {
-        public static TodoItem FromDto(TodoItemDto dto)
-            => TodoItem(TodoId(dto.Id), TodoIsDone(dto.IsDone), TodoContent(dto.Content));
+        public static Validation<Error, TodoItem> FromDto(TodoItemDto dto)
+            => TodoItem.New(dto.Id, dto.IsDone, dto.Content);
 
         public static TodoItemDto ToDto(TodoItem item)
             => TodoItemDto.New(item.Id.Value, item.IsDone.Value, item.Content.Value);

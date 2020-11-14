@@ -36,10 +36,7 @@ namespace Architecture.DataSource.MongoDb.Todo
             throw new NotImplementedException();
         }
 
-        public EitherAsync<DatabaseFailure, Unit> AddAsync(TodoItemDto todoItem)
-        {
-            throw new NotImplementedException();
-        }
+        public EitherAsync<DatabaseFailure, Unit> AddAsync(TodoItemDto todoItem) => unit;
 
         public EitherAsync<DatabaseFailure, Unit> UpdateAsync(TodoItemDto todoItem)
         {

@@ -40,12 +40,12 @@
             GetAllAsync()
                 .Map(xs => xs.Find(x => x.Id == id));
 
-        public EitherAsync<TodoFailure, Unit> AddAsync(TodoItem item) =>
-            from cache in GetAllAsync()
-            from updatedCache in Right(cache.Add(item)).ToAsync()
-            from _1 in UpdateCache(updatedCache)
-            from _2 in PersistAsync(item)
-            select _2;
+        public EitherAsync<TodoFailure, Unit> AddAsync(TodoItem item) => unit;
+            //from cache in GetAllAsync()
+            //from updatedCache in Right(cache.Add(item)).ToAsync()
+            //from _1 in UpdateCache(updatedCache)
+            //from _2 in PersistAsync(item)
+            //select _2;
 
         private EitherAsync<TodoFailure, Seq<TodoItem>> RetrieveAndCache()
         {
@@ -66,12 +66,20 @@
         private EitherAsync<TodoFailure, Seq<TodoItem>> RetrieveAsync() =>
             _todoItemDataSource.GetAllAsync()
                 .MapLeft(TodoFailureCon.Database)
-                .MapT(TodoItemTranslator.FromDto);
+                .Bind(Translate);
 
         private EitherAsync<TodoFailure, Option<Seq<TodoItem>>> RetrieveCacheAsync() =>
             _cache.GetAsync()
                 .MapLeft(TodoFailureCon.Cache);
 
-        private Either<TodoFailure, T> Right<T>(T value) => GenericFunctions.Right<TodoFailure, T>(value);
+        private static Either<TodoFailure, T> Right<T>(T value) => GenericFunctions.Right<TodoFailure, T>(value);
+
+        private EitherAsync<TodoFailure, Seq<TodoItem>> Translate(Seq<TodoItemDto> dtos) =>
+            dtos
+                .Select(TodoItemTranslator.FromDto)
+                .Sequence()
+                .ToEither()
+                .ToAsync()
+                .MapLeft(TodoFailureCon.Translation);
     }
 }
