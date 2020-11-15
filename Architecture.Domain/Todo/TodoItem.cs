@@ -14,16 +14,16 @@
 
         private TodoContent(string value) => Value = value;
 
-        private static Validation<string, string> Validation(string value) =>
+        private static Validation<string, string> Validation(string? value) =>
             NotNull(value)
                 .Bind(NotEmpty)
                 .Bind(MaxStrLength(300));
 
-        private static Validation<Error, string> Validate(string value) =>
+        private static Validation<Error, string> Validate(string? value) =>
             Validation(value)
                 .MapFail(error => Error.New("Content " + error));
 
-        public static Validation<Error, TodoContent> New(string value) =>
+        public static Validation<Error, TodoContent> New(string? value) =>
             Validate(value)
                 .Map(str => new TodoContent(str));
     }

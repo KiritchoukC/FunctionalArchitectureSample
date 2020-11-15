@@ -25,8 +25,8 @@ namespace Architecture.Domain.Validators
                 ? Fail<string, string>("field cannot be empty")
                 : Success<string, string>(str);
 
-        public static Validation<string, string> NotNull(string value) =>
-            notnull(value)
+        public static Validation<string, string> NotNull(string? value) =>
+            value is not null
                 ? Success<string, string>(value)
                 : Fail<string, string>("field cannot be null");
     }
