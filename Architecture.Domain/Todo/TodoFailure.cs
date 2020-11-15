@@ -30,13 +30,13 @@ namespace Architecture.Domain.Todo
         public class Validation : TodoFailure
         {
             public readonly Seq<Error> Errors;
-            public string ErrorsJoined() => string.Join(Environment.NewLine, Errors);
+            public string ErrorsJoined => string.Join(Environment.NewLine, Errors);
             public Validation(Seq<Error> errors) => Errors = errors;
         }
         public class Translation : TodoFailure
         {
             public readonly Seq<Error> Errors;
-            public string ErrorsJoined() => string.Join(Environment.NewLine, Errors);
+            public string ErrorsJoined => string.Join(Environment.NewLine, Errors);
             public Translation(Seq<Error> errors) => Errors = errors;
         }
     }

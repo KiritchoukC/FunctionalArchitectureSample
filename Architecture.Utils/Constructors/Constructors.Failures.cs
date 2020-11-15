@@ -12,10 +12,10 @@ namespace Architecture.Utils.Constructors
     {
         public static class CacheFailureCon
         {
-            public static CacheFailure Fetch() => new CacheFailure.Fetch();
-            public static CacheFailure Insert() => new CacheFailure.Insert();
-            public static CacheFailure Serialization() => new CacheFailure.Serialization();
-            public static CacheFailure Deserialization() => new CacheFailure.Deserialization();
+            public static CacheFailure Fetch(Error error) => new CacheFailure.Fetch(error);
+            public static CacheFailure Insert(Error error) => new CacheFailure.Insert(error);
+            public static CacheFailure Serialization(Error error) => new CacheFailure.Serialization(error);
+            public static CacheFailure Deserialization(Error error) => new CacheFailure.Deserialization(error);
         }
         public static class DatabaseFailureCon
         {

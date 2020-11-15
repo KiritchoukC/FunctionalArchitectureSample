@@ -13,6 +13,6 @@ namespace Architecture.Infrastructure.Todo
             => TodoItem.New(dto.Id, dto.IsDone, dto.Content);
 
         public static TodoItemDto ToDto(TodoItem item)
-            => TodoItemDto.New(item.Id.Value, item.IsDone.Value, item.Content.Value);
+            => new(item.Id.Value, item.IsDone.Value, item.Content.Value);
     }
 }

@@ -1,8 +1,12 @@
 ﻿namespace Architecture.Utils.Extensions
 {
     using System;
+
     using LanguageExt;
+
     using Microsoft.Extensions.Logging;
+    using Microsoft.Win32.SafeHandles;
+
     using static LanguageExt.Prelude;
 
     public static class GenericExtensions
@@ -10,6 +14,27 @@
         public static T LogInfo<T>(this T @this, ILogger logger, Func<T, string> messageFunc)
         {
             logger.LogInformation(messageFunc(@this));
+            return @this;
+        }
+
+        public static Either<TLeft, TRight> LogWarningLeft<TLeft, TRight>(this Either<TLeft, TRight> @this, ILogger logger, Func<TLeft, string> messageFunc)
+        {
+            if (@this.IsLeft)
+            {
+                logger.LogWarning(@this.Match(_ => "", messageFunc));
+            }
+            return @this;
+        }
+
+        public static EitherAsync<TLeft, TRight> LogWarningLeft<TLeft, TRight>(this EitherAsync<TLeft, TRight> @this, ILogger logger, Func<TLeft, string> messageFunc)
+        {
+            @this.Match(
+                _ => unit,
+                leftCase =>
+                {
+                    logger.LogWarning(messageFunc(leftCase));
+                    return unit;
+                });
             return @this;
         }
 

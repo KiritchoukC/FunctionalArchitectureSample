@@ -14,7 +14,7 @@
                 .ToAsync()
                 .MapLeft(HandleFailure)
                 .Match<IActionResult>(
-                    _ => new OkResult(),
+                    result => result is Unit ? new OkResult() : new OkObjectResult(result),
                     failureMessage => new BadRequestObjectResult(failureMessage));
     }
 }

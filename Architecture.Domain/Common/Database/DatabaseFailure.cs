@@ -6,10 +6,12 @@
 
     public abstract class DatabaseFailure : OneOfBase<DatabaseFailure.Retrieve>
     {
+        public Error Error { get; }
+        public DatabaseFailure(Error error) => Error = error;
+
         public class Retrieve : DatabaseFailure
         {
-            public readonly Error Error;
-            public Retrieve(Error error) => Error = error;
+            public Retrieve(Error error) : base(error) { }
         }
     }
 }

@@ -11,8 +11,8 @@ namespace Architecture.Presentation.Common
             => failure.Match(
                 cacheFailure => HandleCacheFailure(cacheFailure.Failure),
                 databaseFailure => HandleDatabaseFailure(databaseFailure.Failure),
-                validationFailure => validationFailure.ErrorsJoined(),
-                translationFailure => translationFailure.ErrorsJoined());
+                validationFailure => validationFailure.ErrorsJoined,
+                translationFailure => translationFailure.ErrorsJoined);
 
         public static string HandleCacheFailure(CacheFailure failure)
             => failure.Match(

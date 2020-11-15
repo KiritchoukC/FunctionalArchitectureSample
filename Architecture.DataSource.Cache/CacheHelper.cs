@@ -23,7 +23,7 @@ namespace Architecture.DataSource.Cache
         public static EitherAsync<CacheFailure, Option<T>> GetBytes<T>(Func<Task<T>> cacheGetAsync) =>
             TryAsync(async () => (await cacheGetAsync()).Apply(Optional))
                 .ToEither()
-                .MapLeft(_ => CacheFailureCon.Fetch());
+                .MapLeft(CacheFailureCon.Fetch);
 
         /// <summary>
         /// Set item to cache as bytes asynchronously
@@ -37,7 +37,7 @@ namespace Architecture.DataSource.Cache
         public static EitherAsync<CacheFailure, Unit> SetBytes(Func<Task> cacheSet) =>
             TryAsync(async () => { await cacheSet(); return unit; })
                 .ToEither()
-                .MapLeft(_ => CacheFailureCon.Insert());
+                .MapLeft(CacheFailureCon.Insert);
 
         /// <summary>
         /// Deserialize the json string to type T
@@ -52,7 +52,7 @@ namespace Architecture.DataSource.Cache
         public static EitherAsync<CacheFailure, T> DeserializeStringToObject<T>(string jsonString) =>
             Try(() => JsonSerializer.Deserialize<T>(jsonString) ?? throw new Exception("Deserialized object is null"))
                 .ToEitherAsync()
-                .MapLeft(_ => CacheFailureCon.Deserialization());
+                .MapLeft(CacheFailureCon.Deserialization);
 
         /// <summary>
         /// Serialize an object to a json string
@@ -66,8 +66,7 @@ namespace Architecture.DataSource.Cache
         /// </returns>
         public static EitherAsync<CacheFailure, string> SerializeObjectToString<T>(T item) =>
                 Try(() => JsonSerializer.Serialize(item))
-                    .ToEither()
-                    .MapLeft(_ => CacheFailureCon.Serialization())
-                    .ToAsync();
+                    .ToEitherAsync()
+                    .MapLeft(CacheFailureCon.Serialization);
     }
 }
