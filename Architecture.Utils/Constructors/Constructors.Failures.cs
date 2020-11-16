@@ -20,6 +20,7 @@ namespace Architecture.Utils.Constructors
         public static class DatabaseFailureCon
         {
             public static DatabaseFailure Retrieve(Error error) => new DatabaseFailure.Retrieve(error);
+            public static DatabaseFailure Insert(Error error) => new DatabaseFailure.Insert(error);
         }
         public static class TodoFailureCon
         {

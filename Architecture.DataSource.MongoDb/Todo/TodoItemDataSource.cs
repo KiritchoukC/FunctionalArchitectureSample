@@ -28,7 +28,7 @@ namespace Architecture.DataSource.MongoDb.Todo
         }
 
         public EitherAsync<DatabaseFailure, Seq<TodoItemDto>> GetAllAsync() =>
-            GetAsync(async () => await _todoCollection.FindAsync(x => true))
+            GetAsync(() => _todoCollection.FindAsync(x => true))
                 .MapLeft(DatabaseFailureCon.Retrieve);
 
         public EitherAsync<DatabaseFailure, Option<TodoItem>> GetByIdAsync(Guid id)
@@ -36,14 +36,17 @@ namespace Architecture.DataSource.MongoDb.Todo
             throw new NotImplementedException();
         }
 
-        public EitherAsync<DatabaseFailure, Unit> AddAsync(TodoItemDto todoItem) => unit;
+        public EitherAsync<DatabaseFailure, Unit> AddAsync(TodoItemDto todoItem) => 
+            TryAsync(() => _todoCollection.InsertOneAsync(todoItem).ToUnit())
+                .ToEither()
+                .MapLeft(DatabaseFailureCon.Insert);
 
         public EitherAsync<DatabaseFailure, Unit> UpdateAsync(TodoItemDto todoItem)
         {
             throw new NotImplementedException();
         }
 
-        private EitherAsync<Error, Seq<T>> GetAsync<T>(Func<Task<IAsyncCursor<T>>> f) =>
+        private static EitherAsync<Error, Seq<T>> GetAsync<T>(Func<Task<IAsyncCursor<T>>> f) =>
             from t in TryAsync(f).ToEither()
             select t.ToList().ToSeq();
     }

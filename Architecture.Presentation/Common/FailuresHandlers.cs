@@ -23,6 +23,7 @@ namespace Architecture.Presentation.Common
 
         public static string HandleDatabaseFailure(DatabaseFailure failure)
             => failure.Match(
-                retrieveFailure => retrieveFailure.Error.ToString());
+                retrieveFailure => retrieveFailure.Error.ToString(),
+                insertFailure => insertFailure.Error.ToString());
     }
 }
