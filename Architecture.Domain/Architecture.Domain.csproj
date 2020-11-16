@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="LanguageExt.Core" Version="3.4.15" />
-    <PackageReference Include="OneOf" Version="2.1.155" />
   </ItemGroup>
 
 </Project>

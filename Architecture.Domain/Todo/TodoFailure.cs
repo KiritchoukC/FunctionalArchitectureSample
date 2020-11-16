@@ -9,13 +9,7 @@ namespace Architecture.Domain.Todo
     using LanguageExt;
     using LanguageExt.Common;
 
-    using OneOf;
-
-    public abstract class TodoFailure : OneOfBase<
-        TodoFailure.Cache,
-        TodoFailure.Database,
-        TodoFailure.Validation,
-        TodoFailure.Translation>
+    public abstract class TodoFailure
     {
         public class Cache : TodoFailure
         {

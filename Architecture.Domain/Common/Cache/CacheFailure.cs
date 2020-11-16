@@ -3,13 +3,7 @@ namespace Architecture.Domain.Common.Cache
 {
     using LanguageExt.Common;
 
-    using OneOf;
-
-    public abstract class CacheFailure : OneOfBase<
-        CacheFailure.Fetch,
-        CacheFailure.Insert,
-        CacheFailure.Serialization,
-        CacheFailure.Deserialization>
+    public abstract class CacheFailure
     {
         public Error Error { get; }
         public CacheFailure(Error error) => Error = error;

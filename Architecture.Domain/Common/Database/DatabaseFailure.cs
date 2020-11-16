@@ -2,9 +2,7 @@
 {
     using LanguageExt.Common;
 
-    using OneOf;
-
-    public abstract class DatabaseFailure : OneOfBase<DatabaseFailure.Retrieve, DatabaseFailure.Insert>
+    public abstract class DatabaseFailure
     {
         public Error Error { get; }
         public DatabaseFailure(Error error) => Error = error;
