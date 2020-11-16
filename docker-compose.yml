@@ -7,10 +7,10 @@ services:
       context: .
       dockerfile: Architecture.Presentation/Dockerfile
     depends_on:
-      - db
+      - mongo
       - redis
 
-  db:
+  mongo:
     image: mongo
     ports:
       - "27017-27019:27017-27019"
@@ -26,3 +26,17 @@ services:
       - "6379:6379"
     volumes:
       - c:/data/redis:/data/redis
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_OPTIONS_EDITORTHEME: panda-syntax
+      ME_CONFIG_EDITORTHEME: panda-syntax

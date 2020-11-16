@@ -8,7 +8,10 @@ namespace Architecture.DataSource.MongoDb
     {
         public static IServiceCollection AddDatabase(this IServiceCollection services, string connectionString, string database)
         {
-            services.AddSingleton<IMongoClient, MongoClient>(_ => new MongoClient(connectionString));
+            var mongoSettings = MongoClientSettings.FromConnectionString(connectionString);
+            mongoSettings.ApplicationName = "TodoFunctionalApp";
+
+            services.AddSingleton<IMongoClient, MongoClient>(_ => new MongoClient(mongoSettings));
 
             services.AddTransient<ITodoItemDataSource, TodoItemDataSource>();
             
