@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Architecture.DataSource.MongoDb\Architecture.DataSource.MongoDb.csproj" />
+    <ProjectReference Include="..\..\src\Architecture.DataSource.MongoDb\Architecture.DataSource.MongoDb.csproj" />
   </ItemGroup>
 
 </Project>
