@@ -20,36 +20,8 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
 
     using Xunit;
 
-    public class TodoItemDataSource_GetAllAsyncTest
+    public partial class TodoItemDataSourceTest
     {
-        private readonly MockRepository _mockRepository;
-        private readonly Mock<IMongoClient> _mockMongoClient;
-        private readonly Mock<IMongoDatabase> _mockDatabase;
-        private readonly Mock<IMongoCollection<TodoItemDto>> _mockCollection;
-        private readonly Mock<IAsyncCursor<TodoItemDto>> _mockAsyncCursor;
-
-        public TodoItemDataSource_GetAllAsyncTest()
-        {
-            _mockRepository = new MockRepository(MockBehavior.Default);
-
-            _mockMongoClient = _mockRepository.Create<IMongoClient>();
-            _mockDatabase = _mockRepository.Create<IMongoDatabase>();
-            _mockCollection = _mockRepository.Create<IMongoCollection<TodoItemDto>>();
-            _mockAsyncCursor = _mockRepository.Create<IAsyncCursor<TodoItemDto>>();
-        }
-
-        private TodoItemDataSource CreateService()
-        {
-            _mockDatabase
-                .Setup(x => x.GetCollection<TodoItemDto>("items", It.IsAny<MongoCollectionSettings>()))
-                .Returns(_mockCollection.Object);
-
-            _mockMongoClient
-                .Setup(x => x.GetDatabase("todo", It.IsAny<MongoDatabaseSettings>()))
-                .Returns(_mockDatabase.Object);
-
-            return new(_mockMongoClient.Object);
-        }
 
         [Trait("Todo", "GetAllAsync")]
         [Fact(DisplayName = "With data source returning collection should return Right with that collection")]
@@ -67,7 +39,7 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
                     svc.FindAsync(
                         It.IsAny<ExpressionFilterDefinition<TodoItemDto>>(),
                         It.IsAny<FindOptions<TodoItemDto, TodoItemDto>>(),
-                        It.IsAny<CancellationToken>()))
+                        _anyCancellationToken))
                 .Returns(Task.FromResult(_mockAsyncCursor.Object));
 
             var dataSource = CreateService();
@@ -92,7 +64,7 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
                     svc.FindAsync(
                         It.IsAny<ExpressionFilterDefinition<TodoItemDto>>(),
                         It.IsAny<FindOptions<TodoItemDto, TodoItemDto>>(),
-                        It.IsAny<CancellationToken>()))
+                        _anyCancellationToken))
                 .Throws(exception);
 
             var dataSource = CreateService();
