@@ -33,3 +33,5 @@ msbuild.wrn
 
 # JetBrain Rider
 .idea/
+
+misc/
