@@ -12,7 +12,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/kiritchoukc/FunctionalArchitectureSample">
-    <img src="logo256.png" alt="Logo" width="80" height="80">
+    <img src="logo256.png" alt="Logo" width="128" height="128">
   </a>
 
   <h3 align="center">C# Functional Web Api</h3>
