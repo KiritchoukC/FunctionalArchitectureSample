@@ -2,6 +2,8 @@
 namespace Architecture.DataSource.MongoDb.Tests.Todo
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -24,6 +26,7 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
         private readonly Mock<IMongoClient> _mockMongoClient;
         private readonly Mock<IMongoDatabase> _mockDatabase;
         private readonly Mock<IMongoCollection<TodoItemDto>> _mockCollection;
+        private readonly Mock<IAsyncCursor<TodoItemDto>> _mockAsyncCursor;
 
         public TodoItemDataSource_GetAllAsyncTest()
         {
@@ -32,6 +35,7 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
             _mockMongoClient = _mockRepository.Create<IMongoClient>();
             _mockDatabase = _mockRepository.Create<IMongoDatabase>();
             _mockCollection = _mockRepository.Create<IMongoCollection<TodoItemDto>>();
+            _mockAsyncCursor = _mockRepository.Create<IAsyncCursor<TodoItemDto>>();
         }
 
         private TodoItemDataSource CreateService()
@@ -45,6 +49,36 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
                 .Returns(_mockDatabase.Object);
 
             return new(_mockMongoClient.Object);
+        }
+
+        [Trait("Todo", "GetAllAsync")]
+        [Fact(DisplayName = "With data source returning collection should return Right with that collection")]
+        public async Task GetAllAsync_WithDataSourceReturningCollection_ShouldReturnRightWithThatCollection()
+        {
+            // Arrange
+            var expected = new List<TodoItemDto> { 
+                new TodoItemDto(Guid.NewGuid(), false, "Test 1")
+            };
+
+            TestHelper.MockAsyncCursor(_mockAsyncCursor, expected);
+
+            _mockCollection
+                .Setup(svc =>
+                    svc.FindAsync(
+                        It.IsAny<ExpressionFilterDefinition<TodoItemDto>>(),
+                        It.IsAny<FindOptions<TodoItemDto, TodoItemDto>>(),
+                        It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(_mockAsyncCursor.Object));
+
+            var dataSource = CreateService();
+
+            // Act
+            var actual = dataSource.GetAllAsync();
+
+            // Assert
+            await actual.ShouldBeRight();
+            await actual.ShouldBeRight(dtos => dtos.ShouldHaveSingleItem());
+            await actual.ShouldBeRight(dtos => dtos[0].ShouldBe(expected[0]));
         }
 
         [Trait("Todo", "GetAllAsync")]
