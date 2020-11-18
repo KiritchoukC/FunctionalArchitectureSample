@@ -22,9 +22,11 @@
     <br />
     <!-- <a href="https://github.com/kiritchoukc/FunctionalArchitectureSample"><strong>Explore the docs �</strong></a> -->
     <br />
-    <a href="https://github.com/kiritchoukc/FunctionalArchitectureSample/issues">Report Bug</a>
+    <a href="https://github.com/KiritchoukC/FunctionalArchitectureSample/issues/new?assignees=&labels=bug&template=bug_report.md&title=%5BBUG%5D">Report Bug</a>
     |
-    <a href="https://github.com/kiritchoukc/FunctionalArchitectureSample/issues">Request Feature</a>
+    <a href="https://github.com/KiritchoukC/FunctionalArchitectureSample/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=%5BFEAT%5D">Request Feature</a>
+    |
+    <a href="https://github.com/KiritchoukC/FunctionalArchitectureSample/issues/new/choose">New Issue</a>
     <br />
   </p>
 </p>
