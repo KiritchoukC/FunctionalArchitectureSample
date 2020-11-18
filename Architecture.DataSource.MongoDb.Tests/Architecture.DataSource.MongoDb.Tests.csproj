@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Todo\TodoItemDataSourceTest.cs~RF10faf25.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="LanguageExt.UnitTesting" Version="3.3.5" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
     <PackageReference Include="Moq" Version="4.15.1" />
