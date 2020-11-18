@@ -36,10 +36,16 @@ namespace Architecture.DataSource.MongoDb.Todo
                 .MapLeft(DatabaseFailureCon.Insert);
 
         public EitherAsync<DatabaseFailure, Unit> UpdateAsync(TodoItemDto todoItem) =>
-            throw new NotImplementedException();
+            TryAsync(() => _todoCollection.UpdateOneAsync(x => x.Id == todoItem.Id, Updater(todoItem)).ToUnit())
+                .ToEither()
+                .MapLeft(DatabaseFailureCon.Update);
 
         private static EitherAsync<Error, Seq<T>> GetAsync<T>(Func<Task<IAsyncCursor<T>>> f) =>
             from t in TryAsync(f).ToEither()
             select t.ToList().ToSeq();
+
+        private static UpdateDefinition<TodoItemDto> Updater(TodoItemDto dto) => Builders<TodoItemDto>.Update
+            .Set(x => x.Content, dto.Content)
+            .Set(x => x.IsDone, dto.IsDone);
     }
 }

@@ -21,6 +21,7 @@ namespace Architecture.Utils.Constructors
         {
             public static DatabaseFailure Retrieve(Error error) => new DatabaseFailure.Retrieve(error);
             public static DatabaseFailure Insert(Error error) => new DatabaseFailure.Insert(error);
+            public static DatabaseFailure Update(Error error) => new DatabaseFailure.Update(error);
         }
         public static class TodoFailureCon
         {

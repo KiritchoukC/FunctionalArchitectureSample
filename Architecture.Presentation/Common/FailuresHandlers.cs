@@ -29,13 +29,7 @@ namespace Architecture.Presentation.Common
                 _ => throw UnhandledFailureException(failure)
             };
 
-        public static string HandleDatabaseFailure(DatabaseFailure failure) =>
-            failure switch
-            {
-                DatabaseFailure.Retrieve f => f.Error.ToString(),
-                DatabaseFailure.Insert f => f.Error.ToString(),
-                _ => throw UnhandledFailureException(failure)
-            };
+        public static string HandleDatabaseFailure(DatabaseFailure failure) => failure.Error.ToString();
 
         private static Exception UnhandledFailureException<T>(T failure) => new($"Failure {failure?.GetType()} is not handled");
     }

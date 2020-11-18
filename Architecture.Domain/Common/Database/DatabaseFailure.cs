@@ -9,5 +9,6 @@
 
         public class Retrieve : DatabaseFailure { public Retrieve(Error error) : base(error) { } }
         public class Insert : DatabaseFailure { public Insert(Error error) : base(error) { } }
+        public class Update : DatabaseFailure { public Update(Error error) : base(error) { } }
     }
 }
