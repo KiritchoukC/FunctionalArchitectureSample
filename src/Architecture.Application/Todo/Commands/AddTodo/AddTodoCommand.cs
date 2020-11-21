@@ -27,7 +27,7 @@ namespace Architecture.Application.Todo.Commands.AddTodo
         public async Task<Either<TodoFailure, Unit>> Handle(AddTodoCommand request, CancellationToken cancellationToken) =>
             await
             (from item in Validate(request)
-             from _ in _todoItemRepository.AddAsync(item)
+             from _ in _todoItemRepository.Add(item)
              select _).ToEither();
 
         private static EitherAsync<TodoFailure, TodoItem> Validate(AddTodoCommand request) =>

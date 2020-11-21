@@ -12,6 +12,8 @@ namespace Architecture.DataSource.Cache
                 opt.InstanceName = "master";
             });
 
+            services.AddTransient(typeof(ICache<>), typeof(RedisCache<>));
+
             return services;
         }
     }

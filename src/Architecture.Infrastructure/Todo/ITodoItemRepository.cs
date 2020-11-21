@@ -7,8 +7,8 @@ namespace Architecture.Infrastructure.Todo
 {
     public interface ITodoItemRepository
     {
-        EitherAsync<TodoFailure, Seq<TodoItem>> GetAllAsync();
-        EitherAsync<TodoFailure, Option<TodoItem>> GetByIdAsync(TodoId id);
-        EitherAsync<TodoFailure, Unit> AddAsync(TodoItem item);
+        EitherAsync<TodoFailure, Seq<TodoItem>> GetAll();
+        EitherAsync<TodoFailure, Option<TodoItem>> GetById(TodoId id);
+        EitherAsync<TodoFailure, Unit> Add(TodoItem item);
     }
 }

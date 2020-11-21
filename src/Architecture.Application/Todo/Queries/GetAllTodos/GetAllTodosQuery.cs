@@ -33,7 +33,7 @@
                 .LogWarningLeft(_logger, LogFailure)
                 .ToEither();
 
-        private EitherAsync<TodoFailure, Seq<TodoItem>> Fetch() => _todoItemRepository.GetAllAsync();
+        private EitherAsync<TodoFailure, Seq<TodoItem>> Fetch() => _todoItemRepository.GetAll();
 
         private static Seq<TodoItemModel> Project(Seq<TodoItem> items) =>
             items.Select(x => new TodoItemModel(x.Id.Value, x.Content.Value, x.IsDone.Value));

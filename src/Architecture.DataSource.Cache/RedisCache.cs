@@ -10,36 +10,25 @@
     using LanguageExt;
 
     using Microsoft.Extensions.Caching.Distributed;
-    using Microsoft.Extensions.Logging;
 
     using static Architecture.Utils.Constructors.Constructors;
     using static LanguageExt.Prelude;
 
     public class RedisCache<T> : ICache<T>
     {
-        private readonly ILogger _logger;
-        private readonly string _cacheKey;
         private readonly IDistributedCache _cache;
 
-        public RedisCache(
-            string cacheKey,
-            IDistributedCache cache,
-            ILogger logger)
-        {
-            _cacheKey = cacheKey;
-            _cache = cache;
-            _logger = logger;
-        }
+        public RedisCache(IDistributedCache cache) => _cache = cache;
 
-        public EitherAsync<CacheFailure, Option<T>> GetAsync() =>
-            TryAsync(async () => (await _cache.GetStringAsync(_cacheKey)).Apply(Optional))
+        public EitherAsync<CacheFailure, Option<T>> GetAsync(string cacheKey) =>
+            TryAsync(async () => (await _cache.GetStringAsync(cacheKey)).Apply(Optional))
                 .ToEither()
                 .MapLeft(CacheFailureCon.Fetch)
                 .MapO(DeserializeStringToObject);
 
-        public EitherAsync<CacheFailure, Unit> SetAsync(T item)
+        public EitherAsync<CacheFailure, Unit> SetAsync(string cacheKey, T item)
             => SerializeObjectToString(item)
-                .Bind(SetBytes(jsonStr => _cache.SetStringAsync(_cacheKey, jsonStr)));
+                .Bind(SetBytes(jsonStr => _cache.SetStringAsync(cacheKey, jsonStr)));
 
         private static EitherAsync<CacheFailure, string> SerializeObjectToString(T item) =>
                 Try(() => JsonSerializer.Serialize(item))
