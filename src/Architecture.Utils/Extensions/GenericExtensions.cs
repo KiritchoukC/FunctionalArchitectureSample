@@ -5,7 +5,6 @@
     using LanguageExt;
 
     using Microsoft.Extensions.Logging;
-    using Microsoft.Win32.SafeHandles;
 
     using static LanguageExt.Prelude;
 
@@ -57,5 +56,6 @@
             this EitherAsync<TFailure, Option<TSource>> @this,
             Func<TSource, EitherAsync<TFailure, TResult>> f)
             => @this.Bind(opt => opt.Match(t => f(t).Map(Optional), () => Right<TFailure, Option<TResult>>(Option<TResult>.None).ToAsync()));
+
     }
 }
