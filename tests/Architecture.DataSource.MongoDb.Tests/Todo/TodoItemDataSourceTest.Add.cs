@@ -6,6 +6,7 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
 
     using Architecture.DataSource.MongoDb.Todo;
     using Architecture.Domain.Common.Database;
+    using Architecture.Infrastructure.Todo;
 
     using LanguageExt.UnitTesting;
 
@@ -21,9 +22,9 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
 
     public partial class TodoItemDataSourceTest
     {
-        [Trait("Todo", "AddAsync")]
+        [Trait("TodoItemDataSource", "Add")]
         [Fact(DisplayName = "With data source returning void should return Right Unit")]
-        public async Task AddAsync_WithDataSourceReturningVoid_ShouldReturnRightUnit()
+        public async Task Add_WithDataSourceReturningVoid_ShouldReturnRightUnit()
         {
             // Arrange
             var itemToAdd = new TodoItemDto(Guid.NewGuid(), false, "Test");
@@ -35,16 +36,16 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
             var dataSource = CreateService();
 
             // Act
-            var actual = dataSource.AddAsync(itemToAdd);
+            var actual = dataSource.Add(itemToAdd);
 
             // Assert
             await actual.ShouldBeRight();
             await actual.ShouldBeRight(u => u.ShouldBe(unit));
         }
 
-        [Trait("Todo", "AddAsync")]
+        [Trait("TodoItemDataSource", "Add")]
         [Fact(DisplayName = "With data source throwing exception should return Left Insert failure and thrown exception")]
-        public async Task AddAsync_WithDataSourceThrowingException_ShouldReturnLeftInsertFailueAndThrownException()
+        public async Task Add_WithDataSourceThrowingException_ShouldReturnLeftInsertFailueAndThrownException()
         {
             // Arrange
             var exception = new Exception("Test exception");
@@ -56,7 +57,7 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
             var dataSource = CreateService();
 
             // Act
-            var actual = dataSource.AddAsync(itemToAdd);
+            var actual = dataSource.Add(itemToAdd);
 
             // Assert
             await actual.ShouldBeLeft(failure => failure.ShouldBeOfType<DatabaseFailure.Insert>());

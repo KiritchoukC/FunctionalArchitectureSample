@@ -9,6 +9,7 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
 
     using Architecture.DataSource.MongoDb.Todo;
     using Architecture.Domain.Common.Database;
+    using Architecture.Infrastructure.Todo;
 
     using LanguageExt.UnitTesting;
 
@@ -23,9 +24,9 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
     public partial class TodoItemDataSourceTest
     {
 
-        [Trait("Todo", "GetAllAsync")]
+        [Trait("TodoItemDataSource", "GetAll")]
         [Fact(DisplayName = "With data source returning collection should return Right with that collection")]
-        public async Task GetAllAsync_WithDataSourceReturningCollection_ShouldReturnRightWithThatCollection()
+        public async Task GetAll_WithDataSourceReturningCollection_ShouldReturnRightWithThatCollection()
         {
             // Arrange
             var expected = new List<TodoItemDto> { 
@@ -45,7 +46,7 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
             var dataSource = CreateService();
 
             // Act
-            var actual = dataSource.GetAllAsync();
+            var actual = dataSource.GetAll();
 
             // Assert
             await actual.ShouldBeRight();
@@ -53,9 +54,9 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
             await actual.ShouldBeRight(dtos => dtos[0].ShouldBe(expected[0]));
         }
 
-        [Trait("Todo", "GetAllAsync")]
+        [Trait("TodoItemDataSource", "GetAll")]
         [Fact(DisplayName = "With data source throwing exception should return Left Retrieve failure and thrown exception")]
-        public async Task GetAllAsync_WithDataSourceThrowingException_ShouldReturnLeftRetrieveFailueAndThrownException()
+        public async Task GetAll_WithDataSourceThrowingException_ShouldReturnLeftRetrieveFailueAndThrownException()
         {
             // Arrange
             var exception = new Exception("Test exception");
@@ -70,7 +71,7 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
             var dataSource = CreateService();
 
             // Act
-            var actual = dataSource.GetAllAsync();
+            var actual = dataSource.GetAll();
 
             // Assert
             await actual.ShouldBeLeft(failure => failure.ShouldBeOfType<DatabaseFailure.Retrieve>());

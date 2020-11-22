@@ -1,14 +1,10 @@
 ﻿
 namespace Architecture.DataSource.MongoDb.Tests.Todo
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using Architecture.DataSource.MongoDb.Todo;
+    using Architecture.Infrastructure.Todo;
 
     using MongoDB.Driver;
 

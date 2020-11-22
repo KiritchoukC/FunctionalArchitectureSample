@@ -6,6 +6,7 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
 
     using Architecture.DataSource.MongoDb.Todo;
     using Architecture.Domain.Common.Database;
+    using Architecture.Infrastructure.Todo;
 
     using LanguageExt.UnitTesting;
 
@@ -22,9 +23,9 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
 
     public partial class TodoItemDataSourceTest
     {
-        [Trait("Todo", "UpdateAsync")]
+        [Trait("TodoItemDataSource", "Update")]
         [Fact(DisplayName = "With data source returning void should return Right Unit")]
-        public async Task UpdateAsync_WithDataSourceReturningVoid_ShouldReturnRightUnit()
+        public async Task Update_WithDataSourceReturningVoid_ShouldReturnRightUnit()
         {
             // Arrange
             var itemToUpdate = new TodoItemDto(Guid.NewGuid(), false, "Test");
@@ -39,16 +40,16 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
             var dataSource = CreateService();
 
             // Act
-            var actual = dataSource.UpdateAsync(itemToUpdate);
+            var actual = dataSource.Update(itemToUpdate);
 
             // Assert
             await actual.ShouldBeRight();
             await actual.ShouldBeRight(u => u.ShouldBe(unit));
         }
 
-        [Trait("Todo", "UpdateAsync")]
+        [Trait("TodoItemDataSource", "Update")]
         [Fact(DisplayName = "With data source throwing exception should return Left Update failure and thrown exception")]
-        public async Task UpdateAsync_WithDataSourceThrowingException_ShouldReturnLeftUpdateFailueAndThrownException()
+        public async Task Update_WithDataSourceThrowingException_ShouldReturnLeftUpdateFailueAndThrownException()
         {
             // Arrange
             var exception = new Exception("Test exception");
@@ -64,7 +65,7 @@ namespace Architecture.DataSource.MongoDb.Tests.Todo
             var dataSource = CreateService();
 
             // Act
-            var actual = dataSource.UpdateAsync(itemToUpdate);
+            var actual = dataSource.Update(itemToUpdate);
 
             // Assert
             await actual.ShouldBeLeft(failure => failure.ShouldBeOfType<DatabaseFailure.Update>());
