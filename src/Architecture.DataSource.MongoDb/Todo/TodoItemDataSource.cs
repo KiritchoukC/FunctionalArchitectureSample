@@ -6,13 +6,14 @@ namespace Architecture.DataSource.MongoDb.Todo
     using System.Threading.Tasks;
 
     using Architecture.Domain.Common.Database;
+    using Architecture.Infrastructure.Todo;
 
     using LanguageExt;
     using LanguageExt.Common;
 
     using MongoDB.Driver;
 
-    using static Architecture.Utils.Constructors.Constructors;
+    using static Architecture.Utils.Constructors;
     using static LanguageExt.Prelude;
 
     public class TodoItemDataSource : ITodoItemDataSource
@@ -26,16 +27,16 @@ namespace Architecture.DataSource.MongoDb.Todo
                 .GetCollection<TodoItemDto>("items");
         }
 
-        public EitherAsync<DatabaseFailure, Seq<TodoItemDto>> GetAllAsync() =>
+        public EitherAsync<DatabaseFailure, Seq<TodoItemDto>> GetAll() =>
             GetAsync(() => _todoCollection.FindAsync(x => true))
                 .MapLeft(DatabaseFailureCon.Retrieve);
 
-        public EitherAsync<DatabaseFailure, Unit> AddAsync(TodoItemDto todoItem) =>
+        public EitherAsync<DatabaseFailure, Unit> Add(TodoItemDto todoItem) =>
             TryAsync(() => _todoCollection.InsertOneAsync(todoItem).ToUnit())
                 .ToEither()
                 .MapLeft(DatabaseFailureCon.Insert);
 
-        public EitherAsync<DatabaseFailure, Unit> UpdateAsync(TodoItemDto todoItem) =>
+        public EitherAsync<DatabaseFailure, Unit> Update(TodoItemDto todoItem) =>
             TryAsync(() => _todoCollection.UpdateOneAsync(x => x.Id == todoItem.Id, Updater(todoItem)).ToUnit())
                 .ToEither()
                 .MapLeft(DatabaseFailureCon.Update);

@@ -11,7 +11,7 @@ namespace Architecture.Application.Todo.Commands.AddTodo
 
     using LanguageExt;
 
-    using static Utils.Constructors.Constructors;
+    using static Utils.Constructors;
 
     public record AddTodoCommand(string? Content, bool? IsDone) : IRequest<Either<TodoFailure, Unit>>;
 

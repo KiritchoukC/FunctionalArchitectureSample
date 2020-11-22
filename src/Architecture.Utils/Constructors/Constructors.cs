@@ -1,4 +1,4 @@
-﻿namespace Architecture.Utils.Constructors
+﻿namespace Architecture.Utils
 {
     public static partial class Constructors
     {

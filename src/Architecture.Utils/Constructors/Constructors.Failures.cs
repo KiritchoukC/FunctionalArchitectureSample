@@ -1,5 +1,5 @@
 ﻿
-namespace Architecture.Utils.Constructors
+namespace Architecture.Utils
 {
     using Architecture.Domain.Common.Cache;
     using Architecture.Domain.Common.Database;

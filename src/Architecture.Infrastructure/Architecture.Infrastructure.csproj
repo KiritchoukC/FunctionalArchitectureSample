@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
       <TargetFramework>net5.0</TargetFramework>
@@ -8,11 +8,10 @@
 
     <ItemGroup>
       <PackageReference Include="LanguageExt.Core" Version="3.4.15" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Architecture.DataSource.Cache\Architecture.DataSource.Cache.csproj" />
-      <ProjectReference Include="..\Architecture.DataSource.MongoDb\Architecture.DataSource.MongoDb.csproj" />
       <ProjectReference Include="..\Architecture.Utils\Architecture.Utils.csproj" />
     </ItemGroup>
 

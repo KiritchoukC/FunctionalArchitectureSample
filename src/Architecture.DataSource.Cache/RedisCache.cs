@@ -5,13 +5,14 @@
     using System.Threading.Tasks;
 
     using Architecture.Domain.Common.Cache;
-    using Architecture.Utils.Extensions;
+    using Architecture.Infrastructure;
+    using Architecture.Utils;
 
     using LanguageExt;
 
     using Microsoft.Extensions.Caching.Distributed;
 
-    using static Architecture.Utils.Constructors.Constructors;
+    using static Architecture.Utils.Constructors;
     using static LanguageExt.Prelude;
 
     public class RedisCache<T> : ICache<T>
@@ -20,13 +21,13 @@
 
         public RedisCache(IDistributedCache cache) => _cache = cache;
 
-        public EitherAsync<CacheFailure, Option<T>> GetAsync(string cacheKey) =>
+        public EitherAsync<CacheFailure, Option<T>> Get(string cacheKey) =>
             TryAsync(async () => (await _cache.GetStringAsync(cacheKey)).Apply(Optional))
                 .ToEither()
                 .MapLeft(CacheFailureCon.Fetch)
                 .MapO(DeserializeStringToObject);
 
-        public EitherAsync<CacheFailure, Unit> SetAsync(string cacheKey, T item)
+        public EitherAsync<CacheFailure, Unit> Set(string cacheKey, T item)
             => SerializeObjectToString(item)
                 .Bind(SetBytes(jsonStr => _cache.SetStringAsync(cacheKey, jsonStr)));
 

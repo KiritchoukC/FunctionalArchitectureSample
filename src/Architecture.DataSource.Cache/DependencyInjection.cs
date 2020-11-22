@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Architecture.Infrastructure;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Architecture.DataSource.Cache
 {

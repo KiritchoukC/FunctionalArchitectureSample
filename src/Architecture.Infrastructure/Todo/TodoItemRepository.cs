@@ -3,14 +3,12 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using Architecture.DataSource.Cache;
-    using Architecture.DataSource.MongoDb.Todo;
     using Architecture.Domain.Todo;
-    using Architecture.Utils.Extensions;
+    using Architecture.Utils;
 
     using LanguageExt;
 
-    using static Architecture.Utils.Constructors.Constructors;
+    using static Architecture.Utils.Constructors;
     using static LanguageExt.Prelude;
 
     public class TodoItemRepository : ITodoItemRepository
@@ -51,34 +49,34 @@
             select db;
 
         private EitherAsync<TodoFailure, Unit> PersistAsync(TodoItem item) =>
-            TodoItemTranslator.ToDto(item).Apply(_todoItemDataSource.AddAsync)
+            TodoItemDto.FromDomain(item).Apply(_todoItemDataSource.Add)
                 .MapLeft(TodoFailureCon.Database);
 
         private EitherAsync<TodoFailure, Unit> UpdateCache(Seq<TodoItem> items) =>
-            items.Select(TodoItemTranslator.ToDto)
-                .Apply(xs => _cache.SetAsync(_cacheKey, xs.ToList()))
+            items.Select(TodoItemDto.FromDomain)
+                .Apply(xs => _cache.Set(_cacheKey, xs.ToList()))
                 .MapLeft(TodoFailureCon.Cache);
 
         private EitherAsync<TodoFailure, Seq<TodoItem>> Retrieve() =>
-            _todoItemDataSource.GetAllAsync()
+            _todoItemDataSource.GetAll()
                 .MapLeft(TodoFailureCon.Database)
                 .Bind(Translate);
 
         private EitherAsync<TodoFailure, Option<Seq<TodoItem>>> RetrieveCache() =>
-            _cache.GetAsync(_cacheKey)
+            _cache.Get(_cacheKey)
                 .MapLeft(TodoFailureCon.Cache)
                 .MapO(items => Translate(new Seq<TodoItemDto>(items)));
 
         private EitherAsync<TodoFailure, Seq<TodoItem>> Translate(Seq<TodoItemDto> dtos) =>
             dtos
-                .Select(TodoItemTranslator.FromDto)
+                .Select(TodoItemDto.ToDomain)
                 .Sequence()
                 .ToEither()
                 .ToAsync()
                 .MapLeft(TodoFailureCon.Translation);
     }
 
-    public static class TodoItemRepositoryX
+    internal static class TodoItemRepositoryX
     {
         public static Either<TodoFailure, TRight> ToEither<TRight>(this TRight @this) => Right(@this);
         public static EitherAsync<TodoFailure, TRight> ToEitherAsync<TRight>(this TRight @this) => @this.ToEither().ToAsync();

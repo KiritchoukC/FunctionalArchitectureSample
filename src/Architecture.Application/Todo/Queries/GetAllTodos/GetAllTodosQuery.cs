@@ -1,13 +1,14 @@
 ﻿namespace Architecture.Application.Todo.Queries.GetAllTodos
 {
-    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
+
     using Architecture.Domain.Todo;
     using Architecture.Infrastructure.Todo;
-    using Architecture.Utils.Extensions;
+    using Architecture.Utils;
 
     using LanguageExt;
+
     using MediatR;
 
     using Microsoft.Extensions.Logging;
@@ -39,7 +40,8 @@
             items.Select(x => new TodoItemModel(x.Id.Value, x.Content.Value, x.IsDone.Value));
 
         private static string LogFailure(TodoFailure failure) =>
-            failure switch {
+            failure switch
+            {
                 TodoFailure.Cache f => f.Failure.Error.ToString(),
                 TodoFailure.Database f => f.Failure.Error.ToString(),
                 TodoFailure.Translation f => f.ErrorsJoined,

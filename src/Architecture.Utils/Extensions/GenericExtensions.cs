@@ -1,4 +1,4 @@
-﻿namespace Architecture.Utils.Extensions
+﻿namespace Architecture.Utils
 {
     using System;
 
