@@ -11,7 +11,6 @@ namespace Architecture.DataSource.Cache.Tests
     using LanguageExt.UnitTesting;
 
     using static LanguageExt.Prelude;
-    //using static Architecture.Utils.Functions;
 
     using Shouldly;
 

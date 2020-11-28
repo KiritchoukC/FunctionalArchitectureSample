@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
 
+    using Architecture.Infrastructure;
     using Architecture.Infrastructure.Todo;
 
     using Microsoft.Extensions.Caching.Distributed;
@@ -23,9 +24,9 @@
             _mockCache = _mockRepository.Create<IDistributedCache>();
         }
 
-        private RedisCache<List<TodoItemDto>> CreateService()
+        private ICache<List<TodoItemDto>> CreateService()
         {
-            return new(_mockCache.Object);
+            return new RedisCache<List<TodoItemDto>>(_mockCache.Object);
         }
     }
 }
