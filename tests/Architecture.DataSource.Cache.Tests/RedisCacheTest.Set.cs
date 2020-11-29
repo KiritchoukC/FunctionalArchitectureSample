@@ -45,7 +45,7 @@ namespace Architecture.DataSource.Cache.Tests
         }
 
         [Trait("Cache", "Set")]
-        [Fact(DisplayName = "With cache returning null should return Right(None)")]
+        [Fact(DisplayName = "With cache returning Task should return Right(Unit)")]
         public async Task Set_WithCacheReturningTask_ShouldReturnRightUnit()
         {
             // Arrange

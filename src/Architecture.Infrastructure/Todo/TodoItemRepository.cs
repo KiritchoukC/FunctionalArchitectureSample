@@ -33,8 +33,7 @@
                         () => RetrieveAndCache()));
 
         public EitherAsync<TodoFailure, Option<TodoItem>> GetById(TodoId id) =>
-            GetAll()
-                .Map(xs => xs.Find(x => x.Id == id));
+            GetAll().Map(xs => xs.Find(x => x.Id == id));
 
         public EitherAsync<TodoFailure, Unit> Add(TodoItem item) =>
             from cache in GetAll()
@@ -65,7 +64,7 @@
         private EitherAsync<TodoFailure, Option<Seq<TodoItem>>> RetrieveCache() =>
             _cache.Get(_cacheKey)
                 .MapLeft(TodoFailureCon.Cache)
-                .MapO(items => Translate(new Seq<TodoItemDto>(items)));
+                .MapO(items => Translate(Seq(items)));
 
         private EitherAsync<TodoFailure, Seq<TodoItem>> Translate(Seq<TodoItemDto> dtos) =>
             dtos
