@@ -25,20 +25,23 @@ namespace Architecture.Infrastructure.Tests.Todo
 
     public partial class TodoItemRepositoryTest
     {
-        private static TodoId GetTodoId(Guid? guid = null) => TodoId.New(guid ?? Guid.NewGuid()).SuccessAsEnumerable()[0];
-
-        [Trait("TodoItemRepository", "GetById")]
-        [Fact(DisplayName = "With not found item should return Right(None)")]
-        public async void GetById_WithNotFoundItem_ShouldReturnRightNone()
+        [Trait("TodoItemRepository", "Add")]
+        [Fact(DisplayName = "With DataSource.Add returning Left(DatabaseFailure) should return Left(TodoFailure.Database)")]
+        public async void Add_WithDataSourceAddReturningLeftDatabaseFailure_ShouldReturnLeftTodoFailureCacheDatabase()
         {
             // Arrange
             var service = CreateService();
 
+            var itemToAdd = TodoItem.New(Guid.NewGuid(), false, "test content").SuccessAsEnumerable()[0];
+
             var items = List(
                 new TodoItemDto(Guid.NewGuid(), false, "test content 1"),
-                new TodoItemDto(Guid.NewGuid(), false, "test content 2")).ToSeq();
+                new TodoItemDto(Guid.NewGuid(), true, "test content 2")).ToSeq();
 
             var cacheResult = Right<CacheFailure, Option<List<TodoItemDto>>>(None);
+            var cacheSetResult = Right<CacheFailure, Unit>(unit);
+            var dataSourceFailure = DatabaseFailureCon.Insert(Error.New("Datbase insert error"));
+            var dataSourceAddResult = Left<DatabaseFailure, Unit>(dataSourceFailure);
 
             _mockCache
                 .Setup(c => c.Get(It.IsAny<string>()))
@@ -47,7 +50,7 @@ namespace Architecture.Infrastructure.Tests.Todo
 
             _mockCache
                 .Setup(c => c.Set(It.IsAny<string>(), It.IsAny<List<TodoItemDto>>()))
-                .Returns(unit)
+                .Returns(cacheSetResult.ToAsync())
                 .Verifiable();
 
             _mockDataSource
@@ -55,26 +58,34 @@ namespace Architecture.Infrastructure.Tests.Todo
                 .Returns(items)
                 .Verifiable();
 
+            _mockDataSource
+                .Setup(ds => ds.Add(It.IsAny<TodoItemDto>()))
+                .Returns(dataSourceAddResult.ToAsync());
+
             // Act
-            var actual = service.GetById(GetTodoId());
+            var actual = service.Add(itemToAdd);
 
             // Assert
-            await actual.ShouldBeRight();
-            await actual.ShouldBeRight(r => r.ShouldBeNone());
+            await actual.ShouldBeLeft();
+            await actual.ShouldBeLeft(f => f.ShouldBeOfType<TodoFailure.Database>());
+            await actual.ShouldBeLeft(f => (f as TodoFailure.Database).Failure.ShouldBe(dataSourceFailure));
         }
-
-        [Trait("TodoItemRepository", "GetById")]
-        [Fact(DisplayName = "With found item should return Right(Some)")]
-        public async void GetById_WithFoundItem_ShouldReturnRightSome()
+        [Trait("TodoItemRepository", "Add")]
+        [Fact(DisplayName = "With everything Right should return Right(Unit)")]
+        public async void Add_WithEverythingRight_ShouldReturnRightUnit()
         {
             // Arrange
             var service = CreateService();
 
+            var itemToAdd = TodoItem.New(Guid.NewGuid(), false, "test content").SuccessAsEnumerable()[0];
+
             var items = List(
                 new TodoItemDto(Guid.NewGuid(), false, "test content 1"),
-                new TodoItemDto(Guid.NewGuid(), false, "test content 2")).ToSeq();
+                new TodoItemDto(Guid.NewGuid(), true, "test content 2")).ToSeq();
 
             var cacheResult = Right<CacheFailure, Option<List<TodoItemDto>>>(None);
+            var cacheSetResult = Right<CacheFailure, Unit>(unit);
+            var dataSourceAddResult = Right<DatabaseFailure, Unit>(unit);
 
             _mockCache
                 .Setup(c => c.Get(It.IsAny<string>()))
@@ -83,7 +94,7 @@ namespace Architecture.Infrastructure.Tests.Todo
 
             _mockCache
                 .Setup(c => c.Set(It.IsAny<string>(), It.IsAny<List<TodoItemDto>>()))
-                .Returns(unit)
+                .Returns(cacheSetResult.ToAsync())
                 .Verifiable();
 
             _mockDataSource
@@ -91,12 +102,16 @@ namespace Architecture.Infrastructure.Tests.Todo
                 .Returns(items)
                 .Verifiable();
 
+            _mockDataSource
+                .Setup(ds => ds.Add(It.IsAny<TodoItemDto>()))
+                .Returns(dataSourceAddResult.ToAsync());
+
             // Act
-            var actual = service.GetById(GetTodoId(items[0].Id));
+            var actual = service.Add(itemToAdd);
 
             // Assert
             await actual.ShouldBeRight();
-            await actual.ShouldBeRight(r => r.ShouldBeSome());
+            await actual.ShouldBeRight(x => x.ShouldBe(unit));
         }
     }
 }

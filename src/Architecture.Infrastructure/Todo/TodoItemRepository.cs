@@ -36,8 +36,8 @@
             GetAll().Map(xs => xs.Find(x => x.Id == id));
 
         public EitherAsync<TodoFailure, Unit> Add(TodoItem item) =>
-            from cache in GetAll()
-            from updatedCache in cache.Add(item).ToEitherAsync()
+            from items in GetAll()
+            from updatedCache in items.Add(item).ToEitherAsync()
             from _1 in UpdateCache(updatedCache)
             from _2 in PersistAsync(item)
             select _2;
